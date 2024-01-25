@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Song';
+    src: url('../public/font/NotoSerifTC-Bold.otf') format('truetype');
+    /* 添加其他字體樣式或全域樣式 */
+}
+
+body {
+    font-family: 'Song', sans-serif;
+}
