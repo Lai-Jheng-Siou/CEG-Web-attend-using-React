@@ -7,7 +7,6 @@ import { Row, Col } from "react-bootstrap"
 
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api'
 
-
 const Cust_Row = styled(Row)`
     border: 2px solid #CFCFCF;
 
@@ -34,9 +33,9 @@ export function AttendRecord() {
     const { attendData } = useContext(recordContext)
 
     const { isLoaded } = useLoadScript({
-        googleMapsApiKey: 'AIzaSyC6bOOHbvxnvgmyPAVeT9_Fzoav6Bmsmqs',
+        googleMapsApiKey: process.env.REACT_APP_Google_Api_Keys,
       })
-
+      console.log()
     return (
         attendData && attendData.length > 0
         ?attendData.map((items, index) => (

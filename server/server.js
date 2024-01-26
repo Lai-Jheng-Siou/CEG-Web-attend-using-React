@@ -106,7 +106,7 @@ app.post('/record', (req, res) => {
   }
 })
 
-app.post('/getKeys', (req, res) => {
+app.post('/getUserInfo', (req, res) => {
   
 })
 

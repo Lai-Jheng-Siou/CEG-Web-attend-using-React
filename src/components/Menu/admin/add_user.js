@@ -53,15 +53,17 @@ function Add_user() {
                 <FormInput id="userEmail"></FormInput>
                 <FormLabel htmlFor="userAccess">權限</FormLabel>
                 <Form.Check
-                 type="radio"
-                 label="一般"
+                    type="radio"
+                    label="一般"
                  />
                  <Form.Check
-                 type="radio"
-                 label="管理"
+                    type="radio"
+                    label="管理"
                  />
-                <Button onClick={sendSubmit}>送出</Button>
-                <Button variant="danger">取消</Button>
+                 <div>
+                    <Button onClick={sendSubmit}>送出</Button>{" "}
+                    <Button variant="danger">取消</Button>
+                 </div>
             </ModalForm>
         </Modal>
         </>

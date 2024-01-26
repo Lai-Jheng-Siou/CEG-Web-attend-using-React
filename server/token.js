@@ -3,7 +3,7 @@ require('dotenv').config({ path: '../.env' });
 
 class Token {
     constructor() {
-        this.secretKey = process.env.JWT_SECRET;
+        this.secretKey = process.env.REACT_APP_JWT_SECRET;
     }
 
     makeToken(user) {
