@@ -1,9 +1,10 @@
 import styled from "styled-components"
 import { device } from "../../rwdSize"
-import { useContext } from "react"
-import recordContext from "./recordContext"
+import { useState, useEffect } from "react"
 
 import { Row, Col } from "react-bootstrap"
+
+import axiosInstance from "../../Instance/axiosInstance"
 
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api'
 
@@ -30,7 +31,24 @@ const Cust_Col = styled(Col)`
 `
 
 export function AttendRecord() {
-    const { attendData } = useContext(recordContext)
+    let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+    const token = userInfo["token"]
+
+    const [attendData, setAttendData] = useState({})
+
+    useEffect(() => {
+        const fetchData = async() => {
+            try {
+                const response = await axiosInstance.post('/record', {
+                    empToken: token
+                })
+                setAttendData(response.data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        fetchData()
+    }, [])
 
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_Google_Api_Keys,

@@ -36,10 +36,10 @@ app.post('/user/login', (req, res) => {
         if (user.pasd === password) {
 
           let tokenInfo = {
-              empId: user.empId,
-              name: user.name,
-              depName: user.depName,
-              userAccess: user.access
+              empId: user.empId,        //員工編號
+              name: user.name,          //姓名
+              depName: user.depName,    //部門名稱
+              userAccess: user.access   //權限集名稱
             }
           const newToken = token.makeToken(tokenInfo)
 
@@ -106,8 +106,26 @@ app.post('/record', (req, res) => {
   }
 })
 
+//取得員工資料
 app.post('/getUserInfo', (req, res) => {
-  
+  const { empToken } = req.body
+  let tokenDecode = token.tokenParse(empToken)
+  if(!tokenDecode.error) {
+    const sqlKeyIn = sqlQuery.read.readEmpAllInfo
+
+    const value = []
+
+    conn.query(sqlKeyIn, value, (err, dbResults) => {
+      if (err) {
+        res.status(500).json({ success: false, error: "數據庫輸入錯誤" });
+      } else {
+        dbResults.apiKey = process.env.Google_Api_Keys
+        res.json(dbResults)
+      }
+    })
+  }else {
+    res.json({ success: false, error: "登入時間已過期" })
+  }
 })
 
 

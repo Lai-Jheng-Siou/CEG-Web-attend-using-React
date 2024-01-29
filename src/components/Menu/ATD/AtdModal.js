@@ -2,7 +2,7 @@ import {React, useContext, useEffect, useState} from "react"
 import { Modal } from "react-responsive-modal";
 import atdBtnContext from "./BtnContext";
 import styled from "styled-components";
-import {Form, Button} from 'react-bootstrap'
+import { Form, Button } from 'react-bootstrap'
 import axiosInstance from '../../Instance/axiosInstance'
 
 const ModalForm = styled.div`

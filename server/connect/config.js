@@ -19,7 +19,8 @@ const sqlQuery = {
     read: {
         readAttend: "SELECT empId, DATE_FORMAT(atdDate, '%Y/%m/%d') AS atdDate, atdTime, Ip, BuildId FROM EMPATTEND WHERE empId = ?",
         readBuilding: "SELECT * FROM BUILDING",
-        readEmpInfo: "SELECT * FROM empinfo WHERE empId = ?"
+        readEmpInfo: "SELECT * FROM empinfo where empId = ?",
+        readEmpAllInfo: "SELECT * FROM empinfo"
     },
 
     update: {

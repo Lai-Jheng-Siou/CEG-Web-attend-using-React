@@ -3,7 +3,10 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useState } from "react";
 
 import { TopItems } from "../TopItem";
+import GetUserIngo from "./getUser";
 import Add_user from "./add_user";
+
+import { CiEdit } from "react-icons/ci";
 
 
 const Cust_Row = styled(Row)`
@@ -30,7 +33,7 @@ function User_info() {
             <Add_user></Add_user>
             <Container >
                 <Cust_Row isOdd>
-                    <Cust_Col_min className="col-1 "></Cust_Col_min>
+                    <Cust_Col_min className="col-1 ">編輯</Cust_Col_min>
                     <Cust_Col_min className="col-1">
                         <Form.Check 
                             type = "checkbox"
@@ -42,6 +45,7 @@ function User_info() {
                     <Cust_Col className="col-2">姓名</Cust_Col>
                     <Cust_Col className="col-2">權限</Cust_Col>
                 </Cust_Row>
+                <GetUserIngo />
 
             </Container>
         </>
