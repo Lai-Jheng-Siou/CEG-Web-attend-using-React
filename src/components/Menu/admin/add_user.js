@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { Container, Button, Row, Col, Form, FormControl } from "react-bootstrap";
+import { Container, Button, Form } from "react-bootstrap";
 import { Modal } from "react-responsive-modal";
 import { useEffect, useState } from "react";
 
-const Cust_Con = styled(Container)`
+const CustCon = styled(Container)`
     margin-top: 20px;
 `
 const ModalForm = styled.div`
@@ -36,10 +36,10 @@ function Add_user() {
 
     return (
         <>
-        <Cust_Con>
+        <CustCon>
             <Button onClick={switchModal}>新增</Button>{" "}
             <Button variant="danger">刪除</Button>
-        </Cust_Con>
+        </CustCon>
         <Modal open={showModal} onClose={switchModal} center>
             <h2>新增使用者</h2>
             <ModalForm>

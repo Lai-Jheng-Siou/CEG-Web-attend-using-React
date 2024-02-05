@@ -6,11 +6,11 @@ import { TopItems } from "../TopItem"
 import { AttendRecord } from "./AttendRecord"
 
 
-const Cust_Row = styled(Row)`
+const CustRow = styled(Row)`
     border: 2px solid #CFCFCF;
     margin-top: 20px;
 `
-const Cust_Col = styled(Col)`
+const CustCol = styled(Col)`
     padding: 5px;
     border-right: 2px solid #CFCFCF;
 `
@@ -21,13 +21,13 @@ export default function Record() {
         <>
             <TopItems />
             <Container>
-                <Cust_Row>
-                    <Cust_Col xs={12} md={2}>員工ID</Cust_Col>
-                    <Cust_Col xs={12} md={2}>打卡日期</Cust_Col>
-                    <Cust_Col xs={12} md={2}>打卡時間</Cust_Col>
-                    <Cust_Col xs={12} md={2}>打卡大樓</Cust_Col>
-                    <Cust_Col xs={12} md={4}>定位</Cust_Col>
-                </Cust_Row>
+                <CustRow>
+                    <CustCol xs={12} md={2}>員工ID</CustCol>
+                    <CustCol xs={12} md={2}>打卡日期</CustCol>
+                    <CustCol xs={12} md={2}>打卡時間</CustCol>
+                    <CustCol xs={12} md={2}>打卡大樓</CustCol>
+                    <CustCol xs={12} md={4}>定位</CustCol>
+                </CustRow>
                 <AttendRecord />
             </Container>
         </>

@@ -8,7 +8,7 @@ import axiosInstance from "../../Instance/axiosInstance"
 
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api'
 
-const Cust_Row = styled(Row)`
+const CustRow = styled(Row)`
     border: 2px solid #CFCFCF;
 
     @media ${device.tablet} {
@@ -18,7 +18,7 @@ const Cust_Row = styled(Row)`
     @media ${device.mobileL} {
     }
 `
-const Cust_Col = styled(Col)`
+const CustCol = styled(Col)`
     border-right: 2px solid #CFCFCF;
 
     @media ${device.tablet} {
@@ -57,12 +57,12 @@ export function AttendRecord() {
     return (
         attendData && attendData.length > 0
         ?attendData.map((items, index) => (
-            <Cust_Row key={index}>
-                <Cust_Col xs={12} md={2}>{items.empId}</Cust_Col>
-                <Cust_Col xs={12} md={2}>{items.atdDate}</Cust_Col>
-                <Cust_Col xs={12} md={2}>{items.atdTime}</Cust_Col>
-                <Cust_Col xs={12} md={2}>{items.BuildId}</Cust_Col>
-                <Cust_Col xs={12} md={4}>
+            <CustRow key={index}>
+                <CustCol xs={12} md={2}>{items.empId}</CustCol>
+                <CustCol xs={12} md={2}>{items.atdDate}</CustCol>
+                <CustCol xs={12} md={2}>{items.atdTime}</CustCol>
+                <CustCol xs={12} md={2}>{items.BuildId}</CustCol>
+                <CustCol xs={12} md={4}>
                     {
                     !isLoaded 
                     ?<div>Loading...</div>
@@ -80,11 +80,11 @@ export function AttendRecord() {
                         <Marker position={{ lat: parseFloat(items.Ip.split(',')[0]), lng: parseFloat(items.Ip.split(',')[1]) }}></Marker>
                     </GoogleMap>
                     }
-                </Cust_Col>
-            </Cust_Row>
+                </CustCol>
+            </CustRow>
         ))
-        :<Cust_Row>
-            <Cust_Col>無紀錄可顯示</Cust_Col>
-        </Cust_Row>
+        :<CustRow>
+            <CustCol>無紀錄可顯示</CustCol>
+        </CustRow>
     )
 } 

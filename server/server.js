@@ -129,6 +129,11 @@ app.post('/getUserInfo', (req, res) => {
 })
 
 
+//更新員工資料
+app.post('/alterUserInfo', (req, res) => {
+  const { empToken,  } = req.body
+})
+
 // 啟動伺服器
 app.listen(config.port, () => {
   console.log(`Server is running at http://localhost:${config.port}`);
