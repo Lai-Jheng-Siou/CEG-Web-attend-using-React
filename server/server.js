@@ -1,10 +1,12 @@
 const express = require('express');
-const conn = require('./connect/db')
 const { config } = require('./connect/config')
-const { sqlQuery } = require('./connect/config')
 require('dotenv').config({ path: '../.env' });
 
-const token = require('./token')
+const Router_login = require('./router/r_login')
+const Router_attend = require('./router/r_attend')
+const Router_record = require('./router/r_record')
+const Roputer_getUerInfo = require('./router/r_getUserInfo')
+const Router_getTableLen = require('./router/r_tableLen')
 
 const app = express();
 
@@ -19,120 +21,21 @@ app.use((req, res, next) => {
   next();
 });
 
-// 登入路由
-app.post('/user/login', (req, res) => {
-  const { username, password } = req.body
-
-  const sql_read = sqlQuery.read.readEmpInfo
-
-  const value = [username]
-    
-  conn.query(sql_read, value, (err, dbResults) => {
-    if (err) {
-      res.status(500).json({ success: false, error: "數據庫查詢錯誤" });
-    } else {
-      if (dbResults.length > 0) {
-        const user = dbResults[0];
-        if (user.pasd === password) {
-
-          let tokenInfo = {
-              empId: user.empId,        //員工編號
-              name: user.name,          //姓名
-              depName: user.depName,    //部門名稱
-              userAccess: user.access   //權限集名稱
-            }
-          const newToken = token.makeToken(tokenInfo)
-
-          let obj = {
-            empId: user.empId,
-            name: user.name,
-            depName: user.depName,
-            success: true,
-            token: newToken
-          }
-          res.json(obj);
-        } else {
-          res.status(401).json({ success: false, error: "密碼錯誤" });
-        }
-      } else {
-        res.status(404).json({ success: false, error: "用戶不存在" });
-      }
-    }
-  });
-});
 
 
-//上下班打卡路由
-app.post('/attend', (req, res) => {
-  const { empId, atdDate, atdTime, ip, buildId, empToken } = req.body
-  let tokenDecode = token.tokenParse(empToken)
-  if ( !tokenDecode.error ) {
-    const sqlKeyIn = sqlQuery.insert.addAttend
+app.use('/', Router_login)  // 登入路由
 
-    const value = [empId, atdDate, atdTime, ip, buildId]
-    conn.query(sqlKeyIn, value, (err) => {
-      if (err) {
-        res.status(500).json({ success: false, error: "數據庫輸入錯誤" });
-      } else {
-        res.json({success: true})
-      }
-    })
+app.use('/', Router_attend)  //上下班打卡路由
 
-  } else {
-    res.json({ success: false, error: "登入時間已過期" })
-  }
-})
+app.use('/', Router_record)  //打卡紀錄
+
+app.use('/', Roputer_getUerInfo) //取得員工資料
+
+app.use('/', Router_getTableLen)  //取得表格長度
 
 
-//打卡紀錄
-app.post('/record', (req, res) => {
-  const { empToken } = req.body
-  let tokenDecode = token.tokenParse(empToken)
-  if(!tokenDecode.error) {
-    const sqlKeyIn = sqlQuery.read.readAttend
+// app.use('/', XXX)  //更新員工資料
 
-    const value = [tokenDecode.empId]
-
-    conn.query(sqlKeyIn, value, (err, dbResults) => {
-      if (err) {
-        res.status(500).json({ success: false, error: "數據庫輸入錯誤" });
-      } else {
-        dbResults.apiKey = process.env.Google_Api_Keys
-        res.json(dbResults)
-      }
-    })
-  }else {
-    res.json({ success: false, error: "登入時間已過期" })
-  }
-})
-
-//取得員工資料
-app.post('/getUserInfo', (req, res) => {
-  const { empToken } = req.body
-  let tokenDecode = token.tokenParse(empToken)
-  if(!tokenDecode.error) {
-    const sqlKeyIn = sqlQuery.read.readEmpAllInfo
-
-    const value = []
-
-    conn.query(sqlKeyIn, value, (err, dbResults) => {
-      if (err) {
-        res.status(500).json({ success: false, error: "數據庫輸入錯誤" });
-      } else {
-        dbResults.apiKey = process.env.Google_Api_Keys
-        res.json(dbResults)
-      }
-    })
-  }else {
-    res.json({ success: false, error: "登入時間已過期" })
-  }
-})
-
-
-//更新員工資料
-app.post('/alterUserInfo', (req, res) => {
-  const { empToken,  } = req.body
-})
 
 // 啟動伺服器
 app.listen(config.port, () => {

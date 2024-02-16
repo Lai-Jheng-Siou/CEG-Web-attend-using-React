@@ -39,7 +39,7 @@ export function AttendRecord() {
     useEffect(() => {
         const fetchData = async() => {
             try {
-                const response = await axiosInstance.post('/record', {
+                const response = await axiosInstance.post(process.env.REACT_APP_GetAtdRecord, {
                     empToken: token
                 })
                 setAttendData(response.data)

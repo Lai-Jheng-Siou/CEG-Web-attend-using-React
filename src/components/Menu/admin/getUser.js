@@ -30,12 +30,25 @@ const CustColmin = styled(Col)`
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 14px;
+
+    @media (max-width: 767px) {
+        max-width: 30px;
+        font-size: 10px;
+    }
 `
 const Custtext = styled.p`
     display: flex;
     align-items: center;
     padding-top: 15px;
+    font-size: 14px;
+
+    @media (max-width: 767px) {
+        font-size: 10px;
+    }
 `
+
+
 
 
 function GetUserInfo(props) {  //傳入參數需有 表格title, token, api address

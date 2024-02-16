@@ -56,7 +56,7 @@ const AddAttendModal = () => {
 
     const sendInfo = async() => {
         try{
-            const response = await axiosInstance.post('/attend', {
+            const response = await axiosInstance.post(process.env.REACT_APP_AddAttend, {
                 empId: userInfo.empId,
                 atdDate: date,
                 atdTime: time,
