@@ -6,7 +6,7 @@ import { Row, Col } from "react-bootstrap"
 
 import axiosInstance from "../../Instance/axiosInstance"
 
-import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api'
+import { useLoadScript, GoogleMap, MarkerF } from '@react-google-maps/api'
 
 const CustRow = styled(Row)`
     border: 2px solid #CFCFCF;
@@ -52,8 +52,8 @@ export function AttendRecord() {
 
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_Google_Api_Keys,
-      })
-      console.log()
+    })
+
     return (
         attendData && attendData.length > 0
         ?attendData.map((items, index) => (
@@ -77,7 +77,7 @@ export function AttendRecord() {
                         mapContainerStyle = {{ width: 'auto', height: '135px', border: '1px solid #000000' }}
                         //   onLoad={handleMapLoad} loading事件處理，地圖加載時進行初始化操作
                         >
-                        <Marker position={{ lat: parseFloat(items.Ip.split(',')[0]), lng: parseFloat(items.Ip.split(',')[1]) }}></Marker>
+                        <MarkerF position={{ lat: parseFloat(items.Ip.split(',')[0]), lng: parseFloat(items.Ip.split(',')[1]) }} />
                     </GoogleMap>
                     }
                 </CustCol>
