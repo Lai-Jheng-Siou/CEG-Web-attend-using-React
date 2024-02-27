@@ -11,12 +11,8 @@ const ModalForm = styled.div`
     flex-direction: column;
     font-family: Song;
 `
-const FormLabel = styled(Form.Label)`
-
-`
-const FormInput = styled(Form.Control)`
-
-`
+const FormLabel = styled(Form.Label)``
+const FormInput = styled(Form.Control)``
 const Btn = styled.div`
     display: flex
     height: 10vh;
@@ -25,9 +21,9 @@ const Btn = styled.div`
 `
 
 const AddAttendModal = () => {
-    const { open, switchModal, token , setTitle, setMsg, switchDialog} = useContext(atdBtnContext)
+    const { open, switchModal, token , setTitle, setMsg, switchDialog } = useContext(atdBtnContext)
 
-    let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+    let userInfo = JSON.parse(sessionStorage.getItem(process.env.REACT_APP_localStorage))
         
     const currentDate = new Date()
     const hours = String(currentDate.getHours()).padStart(2, '0');
@@ -46,36 +42,48 @@ const AddAttendModal = () => {
                     setIpLoc(`${position.coords.latitude},${position.coords.longitude}`)
                 },
                 (error) => {
-                    setIpLoc(`獲取位置失敗: ${error.message}`)
+                    let errorMessage = '未知错误';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = '用户拒绝了位置权限请求';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = '位置信息不可用';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = '获取位置超时';
+                            break;
+                        default:
+                            errorMessage = `获取位置失败: ${error.message}`;
+                    }
+                    console.log(`获取位置失败: ${errorMessage}`)
                 }
             );
-            } else {
-                setIpLoc('瀏覽器不支援 Geolocation API')
-            }
+        }
     }, [open])
 
-    const sendInfo = async() => {
-        try{
-            const response = await axiosInstance.post(process.env.REACT_APP_AddAttend, {
-                empId: userInfo.empId,
-                atdDate: date,
-                atdTime: time,
-                ip: ipLoc,
-                buildId: buildId,
-                empToken: token
-            })
-
-            if (response.data && response.data.success) {
+    const sendInfo = () => {
+        axiosInstance.post(process.env.REACT_APP_AddAttend, {
+            empId: userInfo.empId,
+            atdDate: date,
+            atdTime: time,
+            ip: ipLoc,
+            buildId: buildId,
+            empToken: token
+        })
+        .then(res => {
+            if(res.data && res.data.success) {
                 setMsg('新增成功')
-            } else {
-                setMsg('新增失敗: ' + response.data.error)
+            }else {
+                setMsg('新增失敗: ' + res.data.error)
             }
             switchModal()
             setTitle('訊息')
             switchDialog()
-        } catch (err){
-            console.log(err)
-        } finally {}
+        })
+        .catch(e => {
+            console.log(e)
+        })
     }
 
     return(

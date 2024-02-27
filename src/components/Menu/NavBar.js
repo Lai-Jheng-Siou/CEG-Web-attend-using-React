@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 
 import { sidebarData } from "./sideBarItem";
-import CustDialog from "../../Customize_Tool/Dialog";
+import CustDialog from "../../Customize_Tool/ConfirmDialog";
 import atdBtnContext from "./ATD/BtnContext"
 import AddAttendModal from "./ATD/AtdModal";
 
@@ -15,7 +15,7 @@ import { TopItems } from "./TopItem";
 
 
 function NavBar() {
-    const userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+    const userInfo = JSON.parse(sessionStorage.getItem(process.env.REACT_APP_localStorage))
     const token = userInfo["token"]
 
     const [open, setShow] = useState(false)
@@ -34,6 +34,7 @@ function NavBar() {
                 show={showDialog} 
                 title = {title}
                 msg = {msg}
+                hideFunc={switchDialog}
                 clickConfirm={switchDialog}
             />
 

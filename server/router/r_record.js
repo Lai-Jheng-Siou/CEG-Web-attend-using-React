@@ -1,6 +1,5 @@
 const express = require('express');
 const conn = require('../connect/db')
-const { sqlQuery } = require('../connect/config')
 
 const token = require('../token')
 
@@ -10,7 +9,11 @@ router.post(process.env.REACT_APP_GetAtdRecord, (req, res) => {
     const { empToken } = req.body
     let tokenDecode = token.tokenParse(empToken)
     if(!tokenDecode.error) {
-      const sqlKeyIn = sqlQuery.read.readAttend
+      const sqlKeyIn = `select e.empId, DATE_FORMAT(e.atdDate, '%Y/%m/%d') AS atdDate,
+                    e.atdTime, e.Ip, e.BuildId, ei.name 
+                    from EMPATTEND e left join EMPINFO ei on e.empId = ei.empId
+                    where e.empId = ?
+                `
   
       const value = [tokenDecode.empId]
   
@@ -18,7 +21,15 @@ router.post(process.env.REACT_APP_GetAtdRecord, (req, res) => {
         if (err) {
           res.status(500).json({ success: false, error: "數據庫輸入錯誤" });
         } else {
-          res.json(dbResults)
+          const ary = []
+          for(let i of dbResults.values()) {
+            let tmpAry = []
+            for(let j of Object.values(i)) {
+              tmpAry.push(j)
+            }
+            ary.push(tmpAry)
+          }
+          res.json(ary)
         }
       })
     }else {

@@ -6,7 +6,7 @@ const Router_login = require('./router/r_login')
 const Router_attend = require('./router/r_attend')
 const Router_record = require('./router/r_record')
 const Roputer_getUerInfo = require('./router/r_getUserInfo')
-const Router_getTableLen = require('./router/r_tableLen')
+const Router_getTableLen = require('./router/r_tableLen');
 
 const app = express();
 

@@ -1,23 +1,10 @@
 import {React} from "react";
 import { FaClock } from "react-icons/fa";
 import { FaBuilding } from "react-icons/fa";
-import { FaHouse } from "react-icons/fa6";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { IoSettings } from "react-icons/io5";
 
 export const sidebarData = [
-    // {
-    //     title: '首頁',
-    //     path: '/Menu',
-    //     icon: <FaHouse />,
-    //     cName: 'nav-text'
-    // },
-    // {
-    //     title: '新建打卡',
-    //     path: '/attend',
-    //     icon: <FaClock />,
-    //     cName: 'nav-text',
-    // },
     {
         title: '打卡紀錄',
         path: '/record',

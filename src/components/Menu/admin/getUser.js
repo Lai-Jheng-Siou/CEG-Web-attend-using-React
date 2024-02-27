@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { Container, Row, Col, Form } from "react-bootstrap";
 
@@ -14,16 +14,17 @@ import axiosInstance from "../../Instance/axiosInstance";
 const CustCon = styled(Container)`
     margin-top: 20px;
 `
-
 const CustRow = styled(Row)`
     border: 1px solid #000000;
     background-color: ${(props) => (props.isEven ? '#D3D3D3' : '#fff')};
 `
-
 const CustCol = styled(Col)`
     border: 1px solid #000000;
-`
 
+    @media (max-width: 767px) {
+        border: 0px
+    }
+`
 const CustColmin = styled(Col)`
     border: 2px solid #000000;
     max-width: 60px;
@@ -47,8 +48,6 @@ const Custtext = styled.p`
         font-size: 10px;
     }
 `
-
-
 
 
 function GetUserInfo(props) {  //傳入參數需有 表格title, token, api address
@@ -92,7 +91,29 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
     const [ isTick, setIsTick ] = useState(false)  //當按下勾選框時
     const handleTick = () => {
         setIsTick(!isTick)
+
+        if(isTick) {
+            axiosInstance('', { empToken: token })
+            .then(res => {
+                if(res.data.isSuccess) {
+                    //如果成功返回 將tmp資料修改進當前表格
+                }
+            })
+            .catch(e => {
+                console.log(e)
+            })
+            .finally(() => {
+                //不管成功與否 清除tmp表格  並解除修改模式
+                for(let [, setValue] of tmpMap.values()) {
+                    setValue('')
+                }
+                setEditId(-1)
+                setIsEdit(false)
+                setDis_checkBtn(false)
+            })
+        }
     }
+
 
     //編輯暫存
     const [ tmpName, setTmpName ] = useState('')
@@ -128,35 +149,6 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
         setDis_checkBtn(!dis_checkBtn)
         setEditId(index)
     }
-
-    //當編輯完成 按下勾勾時動作
-    useEffect(() => {
-        if(isTick) {
-            const fetch = async() => {
-                try {
-                    const response = await axiosInstance('', {
-                        empToken: token,
-                        
-                    })
-                    let isSuccess = response.data.isSuccess
-                    if(isSuccess) {
-                        //如果成功返回 將tmp資料修改進當前表格
-                    }
-                }catch(e) {
-                    console.log(e)
-                }finally {
-                    //不管成功與否 清除tmp表格  並解除修改模式
-                    for(let [, setValue] of tmpMap.values()) {
-                        setValue('')
-                    }
-                    setEditId(-1)
-                    setIsEdit(false)
-                    setDis_checkBtn(false)
-                }
-            }
-            fetch()
-        }
-    }, [isTick])
 
     
     return (

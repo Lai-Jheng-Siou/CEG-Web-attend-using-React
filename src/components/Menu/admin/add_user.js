@@ -19,14 +19,10 @@ const FormInput = styled(Form.Control)`
 
 function Add_user() {
     const [showModal, setShowModal] = useState(false)
-    const switchModal = () => {
-        setShowModal(!showModal)
-    }
+    const switchModal = () => { setShowModal(!showModal) }
 
     const [submit, setSubmit] = useState(false)
-    const sendSubmit = () => {
-        setSubmit(!submit)
-    }
+    const sendSubmit = () => { setSubmit(!submit) }
 
     useEffect(() => {
         //寫提交申請請求至後端

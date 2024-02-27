@@ -4,4 +4,4 @@ export { default as NavBar } from "./Menu/NavBar"
 
 export { default as Record } from "./Menu/record/Record"
 
-export { default as User_info } from "./Menu/admin/read_user"
+export { default as Userinfo } from "./Menu/admin/read_user"

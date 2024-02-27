@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
 
 import axiosInstance from "../../Instance/axiosInstance";
 
@@ -16,10 +15,10 @@ const PageDiv = styled.div`
 `
 
 
-function User_info() {
+function Userinfo() {
     const remainder = 10
 
-    let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+    let userInfo = JSON.parse(sessionStorage.getItem(process.env.REACT_APP_localStorage))
     const token = userInfo['token']
     
     const [resData, setResData] = useState({})  //存放後端傳回資料
@@ -27,38 +26,30 @@ function User_info() {
     const [nowPage, setNowPage] = useState(1)
 
     useEffect(() => {  //取得SQL表數量
-        const fetchData = async () => {
-            try {
-                const response = await axiosInstance.post(process.env.REACT_APP_GetTableLen, {
-                    empToken: token,
-                    tableName: 'empinfo'
-                })
-                let total_rows = response.data[0].TOTAL_ROWS
-                
-                setTotalPage(Math.floor(total_rows / remainder) + 1)
-            }catch(err) {
-                console.log(err)
-            }
-        }
-
-        fetchData()
+        axiosInstance.post(process.env.REACT_APP_GetTableLen, {
+            empToken: token,
+            tableName: 'empinfo'
+        })
+        .then(res => {
+            let total_rows = res.data[0].TOTAL_ROWS 
+            setTotalPage(Math.floor(total_rows / remainder) + 1)
+        })
+        .catch(e => {
+            console.log(e)
+        })
     }, [])
 
     useEffect(() => {  //跟後端溝通
-        const fetchData = async () => {
-            try {
-                const response = await axiosInstance.post(process.env.REACT_APP_GetUserInfo, {
-                    empToken: token,
-                    page: nowPage * remainder - 9
-                })
-                
-                setResData(response.data)
-            }catch(err) {
-                console.log(err)
-            }
-        }
-
-        fetchData()
+        axiosInstance.post(process.env.REACT_APP_GetUserInfo, {
+            empToken: token,
+            page: nowPage * remainder - 9
+        })
+        .then(res => {
+            setResData(res.data)
+        })
+        .catch(e => {
+            console.log(e)
+        })
     }, [nowPage])
 
 
@@ -82,4 +73,4 @@ function User_info() {
     )
 }
 
-export default User_info
+export default Userinfo

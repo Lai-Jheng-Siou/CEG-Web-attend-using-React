@@ -1,10 +1,10 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-const CustDialog = ({show, title, msg, clickConfirm}) => {
+const CustDialog = ({show, title, msg, hideFunc, clickConfirm}) => {
   return (
     <>
-      <Modal show={show} onHide={clickConfirm}>
+      <Modal show={show} onHide={hideFunc}>
         <Modal.Header closeButton>
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>

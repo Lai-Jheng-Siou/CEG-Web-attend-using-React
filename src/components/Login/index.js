@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react"
-import { json, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import image from '../img'
 import { Button, Form } from 'react-bootstrap'
@@ -8,60 +8,60 @@ import axiosInstance from '../Instance/axiosInstance'
 
 
 const MainFrame = styled.div`
-display: flex;
-justify-content: center;
-margin-top: 100px
+    display: flex;
+    justify-content: center;
+    margin-top: 100px
 `
 const Frame = styled.div`
-border-top: solid 50px;
-border-right: solid 3px;
-border-left: solid 3px;
-border-bottom: solid 3px;
-border-color: rgba(74,144,226,1);
-border-radius: 25px;
-width: 500px;
-height: 400px
+    border-top: solid 50px;
+    border-right: solid 3px;
+    border-left: solid 3px;
+    border-bottom: solid 3px;
+    border-color: rgba(74,144,226,1);
+    border-radius: 25px;
+    width: 500px;
+    height: 400px
 `
 const Logo = styled.div`
-display: flex;
-justify-content: center;
-margin: 50px
+    display: flex;
+    justify-content: center;
+    margin: 50px
 `
 
 const Acc = styled.div`
-display: flex;
-justify-content: space-evenly;
-height: 60px;
-align-items: center;
+    display: flex;
+    justify-content: space-evenly;
+    height: 60px;
+    align-items: center;
 `
 const Pasd = styled.div`
-position: relative;
-display: flex;
-justify-content: space-evenly;
-margin: 30px
-height: 60px;
-align-items: center;
+    position: relative;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 30px
+    height: 60px;
+    align-items: center;
 
-img {
-    position: absolute;
-    right: 80px; /* 調整右側間距 */
-    top: 50%; /* 垂直居中 */
-    transform: translateY(-50%);
-  }
+    img {
+        position: absolute;
+        right: 80px; /* 調整右側間距 */
+        top: 50%; /* 垂直居中 */
+        transform: translateY(-50%);
+    }
 `
 const Btn = styled(Button)`
-margin-left: 50px;
+    margin-left: 50px;
 `
 const LoginDiv = styled.div`
-display: flex;
-align-items: center;
-margin-top: 25px;
+    display: flex;
+    align-items: center;
+    margin-top: 25px;
 `
 const FormLabel = styled(Form.Label)`
 `
 const FormInput = styled(Form.Control)`
-width: 250px;
-height: 50px;
+    width: 250px;
+    height: 50px;
 `
 
 function Login() {
@@ -78,27 +78,27 @@ function Login() {
         setShowPassword((prevShowPassword) => !prevShowPassword);
     };
 
-    const handleLogin = async() => {
-        try {
-            const response = await axiosInstance.post(process.env.REACT_APP_UserLogin, {
-                username: username,
-                password: password,
-            });
+    const handleLogin = () => {
+        const param = {
+            username: username,
+            password: password,
+        };
 
-            // 處理後端回傳的資料
-            if(response.data && response.data.success) {
+        axiosInstance.post(process.env.REACT_APP_UserLogin, param)
+        .then(res => {
+            if(res.data && res.data.success) {
                 setLoginStatus(1)
-                sessionStorage.setItem('userInfo', JSON.stringify(response.data))
+            sessionStorage.setItem(process.env.REACT_APP_localStorage, JSON.stringify(res.data))
             }else {
                 setErrorMessage('登入失敗')
             }
-        } catch (error) {
-            // 處理錯誤
+        })
+        .catch(error => {
             console.log(error)
             setErrorMessage(error.name)
             setLoginStatus(0)
-        } finally { }
-      };
+        })
+    }
 
       useEffect(() => {
         if(loginStatus) {
