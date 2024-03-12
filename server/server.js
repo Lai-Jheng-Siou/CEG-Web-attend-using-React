@@ -1,5 +1,4 @@
 const express = require('express');
-const { config } = require('./connect/config')
 require('dotenv').config({ path: '../.env' });
 
 const Router_login = require('./router/r_login')
@@ -7,6 +6,7 @@ const Router_attend = require('./router/r_attend')
 const Router_record = require('./router/r_record')
 const Roputer_getUerInfo = require('./router/r_getUserInfo')
 const Router_getTableLen = require('./router/r_tableLen');
+const Router_attendSearch = require('./router/r_attendSearch')
 
 const app = express();
 
@@ -22,7 +22,6 @@ app.use((req, res, next) => {
 });
 
 
-
 app.use('/', Router_login)  // 登入路由
 
 app.use('/', Router_attend)  //上下班打卡路由
@@ -33,11 +32,10 @@ app.use('/', Roputer_getUerInfo) //取得員工資料
 
 app.use('/', Router_getTableLen)  //取得表格長度
 
-
-// app.use('/', XXX)  //更新員工資料
+app.use('/', Router_attendSearch)  //更新員工資料
 
 
 // 啟動伺服器
-app.listen(config.port, () => {
-  console.log(`Server is running at http://localhost:${config.port}`);
+app.listen(process.env.backEnd_port, () => {
+  console.log(`Server is running at http://localhost:${process.env.backEnd_port}`);
 });

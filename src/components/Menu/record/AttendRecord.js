@@ -64,6 +64,11 @@ export function AttendRecord() {
         })
     }, [])
 
+    // 測試看資料
+    // useEffect(() => {
+    //     console.log(attendData)
+    // }, [attendData])
+
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_Google_Api_Keys,
     })
@@ -71,10 +76,9 @@ export function AttendRecord() {
     return (
         <CustCon>
             <div className="d-flex">
-                <RecordSearch />
+                <RecordSearch setAttendInfo = { setAttendData }/>
                 <RecordExport attendInfo = { attendData } />
             </div>
-            {/* <RecordBtn /> */}
             <CustTitleR>
                     <CustTitleC xs={12} md={1}>員工編號</CustTitleC>
                     <CustTitleC xs={12} md={1}>員工姓名</CustTitleC>

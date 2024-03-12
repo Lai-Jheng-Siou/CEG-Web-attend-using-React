@@ -1,7 +1,5 @@
 const express = require('express');
-const conn = require('../connect/db')
-const { sqlQuery } = require('../connect/config')
-require('dotenv').config({ path: '../../.env' });
+const conn = require('./db')
 
 const token = require('../token')
 
@@ -11,7 +9,7 @@ router.post(process.env.REACT_APP_GetUserInfo, (req, res) => {
     const { empToken, page } = req.body
     let tokenDecode = token.tokenParse(empToken)
     if(!tokenDecode.error) {
-      const sqlKeyIn = sqlQuery.read.readEmpAllInfo
+      const sqlKeyIn = "SELECT * FROM empinfo limit ? offset ?"
   
       const value = [10, page]
   
@@ -19,7 +17,7 @@ router.post(process.env.REACT_APP_GetUserInfo, (req, res) => {
         if (err) {
           res.status(500).json({ success: false, error: "數據庫請求錯誤" });
         } else {
-          dbResults.page = 
+          // dbResults.page = 
           res.json(dbResults)
         }
       })

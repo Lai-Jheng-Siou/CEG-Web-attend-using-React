@@ -1,7 +1,5 @@
 const express = require('express');
-const conn = require('../connect/db')
-const { sqlQuery } = require('../connect/config')
-require('dotenv').config({ path: '../../.env' });
+const conn = require('./db')
 
 const token = require('../token')
 
@@ -11,7 +9,7 @@ router.post(process.env.REACT_APP_AddAttend, (req, res) => {
     const { empId, atdDate, atdTime, ip, buildId, empToken } = req.body
     let tokenDecode = token.tokenParse(empToken)
     if ( !tokenDecode.error ) {
-      const sqlKeyIn = sqlQuery.insert.addAttend
+      const sqlKeyIn = "INSERT INTO empattend(empId, atdDate, atdTime, Ip, buildId) VALUES(?, ?, ?, ?, ?)"
   
       const value = [empId, atdDate, atdTime, ip, buildId]
       conn.query(sqlKeyIn, value, (err) => {

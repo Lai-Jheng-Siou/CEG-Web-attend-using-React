@@ -1,9 +1,9 @@
-const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
+const jwt = require('jsonwebtoken');
 
 class Token {
     constructor() {
-        this.secretKey = process.env.REACT_APP_JWT_SECRET;
+        this.secretKey = process.env.JWT_SECRET;
     }
 
     makeToken(user) {

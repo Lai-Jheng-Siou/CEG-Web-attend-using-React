@@ -1,7 +1,5 @@
 const express = require('express');
-const conn = require('../connect/db')
-const { sqlQuery } = require('../connect/config')
-require('dotenv').config({ path: '../../.env' });
+const conn = require('./db')
 
 const token = require('../token')
 
@@ -10,7 +8,7 @@ const router = express.Router()
 router.post(process.env.REACT_APP_UserLogin, (req, res) => {
     const { username, password } = req.body
   
-    const sql_read = sqlQuery.read.readEmpInfo
+    const sql_read = "SELECT * FROM empinfo where empId = ?"
   
     const value = [username]
       

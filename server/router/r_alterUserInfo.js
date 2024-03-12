@@ -1,7 +1,5 @@
 const express = require('express');
-const conn = require('../connect/db')
-const { sqlQuery } = require('../connect/config')
-require('dotenv').config({ path: '../../.env' });
+const conn = require('./db')
 
 const token = require('../token')
 

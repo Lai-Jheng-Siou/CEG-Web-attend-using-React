@@ -88,7 +88,7 @@ function Login() {
         .then(res => {
             if(res.data && res.data.success) {
                 setLoginStatus(1)
-            sessionStorage.setItem(process.env.REACT_APP_localStorage, JSON.stringify(res.data))
+                sessionStorage.setItem(process.env.REACT_APP_localStorage, JSON.stringify(res.data))
             }else {
                 setErrorMessage('登入失敗')
             }

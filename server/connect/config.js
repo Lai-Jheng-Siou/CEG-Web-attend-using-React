@@ -1,14 +1,3 @@
-const config = {
-    port: 3001,
-    db: {
-        host: 'localhost',
-        port: 3306,
-        user: 'root',
-        password: '0000',
-        database: 'attend'
-    }
-}
-
 const sqlQuery = {
     insert: {
         addAttend: "INSERT INTO empattend(empId, atdDate, atdTime, Ip, buildId) VALUES(?, ?, ?, ?, ?)",
@@ -34,5 +23,3 @@ const sqlQuery = {
         delBuilding: ""
     },
 }
-
-module.exports = { config, sqlQuery }

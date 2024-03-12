@@ -1,7 +1,5 @@
 const express = require('express');
-const conn = require('../connect/db')
-const { sqlQuery } = require('../connect/config')
-require('dotenv').config({ path: '../../.env' });
+const conn = require('./db')
 
 const token = require('../token')
 
@@ -11,7 +9,8 @@ router.post(process.env.REACT_APP_GetTableLen, (req, res) => {
     const { empToken, tableName } = req.body
     let tokenDecode = token.tokenParse(empToken)
     if(!tokenDecode.error) {
-      const sqlKeyIn = sqlQuery.read.readTableLen
+
+      const sqlKeyIn = "SELECT COUNT(*) AS TOTAL_ROWS FROM ??"
   
       const value = [tableName]
       conn.query(sqlKeyIn, value, (err, dbResults) => {

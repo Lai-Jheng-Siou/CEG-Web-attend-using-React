@@ -5,6 +5,7 @@ import { ExcelExport } from "../../../Customize_Tool/Excel"
 import { default as CustDialog } from "../../../Customize_Tool/ConfirmDialog"
 
 import { Modal } from "react-responsive-modal";
+import axiosInstance from "../../Instance/axiosInstance"
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -35,13 +36,43 @@ const FormDate = styled(DatePicker)`
     }
 `
 
-export function RecordSearch (){
+export function RecordSearch (props){
+    const { setAttendInfo } = props
     const [show, setShow] = useState(false)
     const switchShow = () => { setShow(!show) }
 
-    const [inputId, setInputId] = useState("")
-    const [inputName, setInputName] = useState("")
-    const [inputdDate, setInputdDate] = useState(null)
+    const [inputId, setInputId] = useState("")  //搜尋編號
+    const [inputName, setInputName] = useState("")  //搜尋姓名
+    const [inputdDate, setInputdDate] = useState("")  //搜尋日期
+
+    let userInfo = JSON.parse(sessionStorage.getItem(process.env.REACT_APP_localStorage))
+    const token = userInfo['token']
+
+
+    const submit = () => {  //向後端提繳用戶搜尋資訊
+        if(inputId || inputName || inputdDate) {
+            axiosInstance.post(process.env.REACT_APP_GetAttendSearch, {
+                empToken: token,
+                id: inputId,
+                name: inputName,
+                date: inputdDate
+            })
+            .then(res => {
+                // 測試
+                // console.log(res.data)
+                setAttendInfo(res.data)
+            })
+            .catch(e => {
+    
+            })
+            .finally(() => {
+                switchShow()
+                setInputId("")
+                setInputName("")
+                setInputdDate("")
+            })
+        }
+    }
 
     return(
         <>
@@ -66,11 +97,17 @@ export function RecordSearch (){
                     <FormLabel>打卡日期</FormLabel><br/>
                     <FormDate 
                         selected={inputdDate}
-                        onChange={(date) => setInputdDate(date)}
-                        dateFormat="yyyy/MM/dd" // 日期格式
+                        onChange={(date) => {
+                            if(date) {
+                                setInputdDate(date.getUTCFullYear() + '-' + (date.getUTCMonth() + 1) + '-' + (date.getUTCDate() + 1))
+                            }else {
+                                setInputdDate("")
+                            }
+                        }}
+                        dateFormat="yyyy-MM-dd" // 日期格式
                         isClearable // 是否可清除日期
                     /><br />
-                    <CustButton onClick={ () => { } }>送出</CustButton>
+                    <CustButton onClick={ () => { submit() } }>送出</CustButton>
                 </ModalForm>
             </Modal>
         </>

@@ -1,5 +1,5 @@
 const express = require('express');
-const conn = require('../connect/db')
+const conn = require('./db')
 
 const token = require('../token')
 
