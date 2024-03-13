@@ -9,8 +9,8 @@ router.post(process.env.REACT_APP_GetAtdRecord, (req, res) => {
     const { empToken } = req.body
     let tokenDecode = token.tokenParse(empToken)
     if(!tokenDecode.error) {
-      const sqlKeyIn = `select e.empId, DATE_FORMAT(e.atdDate, '%Y/%m/%d') AS atdDate,
-                    e.atdTime, e.Ip, e.BuildId, ei.name 
+      const sqlKeyIn = `select e.empId, ei.name, DATE_FORMAT(e.atdDate, '%Y/%m/%d') AS atdDate,
+                    e.atdTime, e.BuildId, e.Ip 
                     from EMPATTEND e left join EMPINFO ei on e.empId = ei.empId
                     where e.empId = ?
                 `

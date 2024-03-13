@@ -36,6 +36,6 @@ app.use('/', Router_attendSearch)  //更新員工資料
 
 
 // 啟動伺服器
-app.listen(process.env.backEnd_port, () => {
+app.listen(process.env.backEnd_port, '192.168.20.133', () => {
   console.log(`Server is running at http://localhost:${process.env.backEnd_port}`);
 });
