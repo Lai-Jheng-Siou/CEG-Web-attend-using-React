@@ -2,6 +2,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import { Container, Row, Col, Form } from "react-bootstrap";
 
+import { device } from "../../rwdSize"
+
 //react icon
 import { CiEdit } from "react-icons/ci";  
 import { TiTick } from "react-icons/ti";
@@ -16,12 +18,12 @@ const CustCon = styled(Container)`
 `
 const CustRow = styled(Row)`
     border: 1px solid #000000;
-    background-color: ${(props) => (props.isEven ? '#D3D3D3' : '#fff')};
+    background-color: ${(props) => (props.iseven ? '#D3D3D3' : '#fff')};
 `
 const CustCol = styled(Col)`
     border: 1px solid #000000;
 
-    @media (max-width: 767px) {
+    @media ${device.mobile} {
         border: 0px
     }
 `
@@ -31,11 +33,11 @@ const CustColmin = styled(Col)`
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 14px;
+    font-size: 15px;
 
-    @media (max-width: 767px) {
-        max-width: 30px;
-        font-size: 10px;
+    @media ${device.mobile} {
+        max-width: 40px;
+        font-size: 20px;
     }
 `
 const Custtext = styled.p`
@@ -44,14 +46,21 @@ const Custtext = styled.p`
     padding-top: 15px;
     font-size: 14px;
 
-    @media (max-width: 767px) {
+    @media ${device.mobile} {
         font-size: 10px;
     }
+`
+
+const MobileRow = styled(Row)`
+`
+const MobileCol = styled(Col)`
 `
 
 
 function GetUserInfo(props) {  //傳入參數需有 表格title, token, api address
     const { resData, token } = props
+
+    const titleText = ['帳號', '密碼', '姓名', '部門', '信箱', '權限']
 
     const [ checkBtn, setCheckBtn ] = useState(new Set())  //存放選取框是否勾選
     
@@ -93,7 +102,12 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
         setIsTick(!isTick)
 
         if(isTick) {
-            axiosInstance('', { empToken: token })
+            const tmp = []
+            for(let i of tmpMap.entries()) {
+                tmp.push(i[1][0])
+            }
+
+            axiosInstance('/alterUser', { empToken: token, newInfo: tmp})
             .then(res => {
                 if(res.data.isSuccess) {
                     //如果成功返回 將tmp資料修改進當前表格
@@ -124,24 +138,24 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
     const [ empAccess, setEmpAccess ] = useState('')
 
     const tmpMap = new Map()  //集中裝存暫存資料 以方便迭代
-    tmpMap.set('name', [tmpName, setTmpName])
-    tmpMap.set('depName', [depName, setDepName])
     tmpMap.set('account', [empAcc, setEmpAcc])
     tmpMap.set('password', [empPasd, setEmpPasd])
+    tmpMap.set('name', [tmpName, setTmpName])
+    tmpMap.set('depName', [depName, setDepName])
     tmpMap.set('email', [empEmail, setEmpEmail])
     tmpMap.set('access', [empAccess, setEmpAccess])
 
     const handleEdit = (index) => {
         if (!isEdit) {
             for (let indexId = 0; indexId < resData.length; indexId++) {
-                const item = resData[indexId];
+                const items = resData[indexId];
                 if (index === indexId) {
-                    setTmpName(item.name);
-                    setDepName(item.depName);
-                    setEmpAcc(item.empId);
-                    setEmpPasd(item.pasd);
-                    setEmpEmail(item.email);
-                    setEmpAccess(item.access);
+                    setEmpAcc(items[0]);
+                    setEmpPasd(items[1]);
+                    setTmpName(items[2]);
+                    setDepName(items[3]);
+                    setEmpEmail(items[4]);
+                    setEmpAccess(items[5]);
                 }
             }
         }
@@ -165,18 +179,17 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                         onChange={() => {  }}
                     />
                 </CustColmin>
-                <CustCol><Custtext>姓名</Custtext></CustCol>
-                <CustCol><Custtext>部門</Custtext></CustCol>
-                <CustCol><Custtext>帳號</Custtext></CustCol>
-                <CustCol><Custtext>密碼</Custtext></CustCol>
-                <CustCol><Custtext>信箱</Custtext></CustCol>
-                <CustCol><Custtext>權限</Custtext></CustCol>
+                {
+                    titleText.map(text => (
+                        <CustCol><Custtext>{text}</Custtext></CustCol>
+                    ))
+                }
             </CustRow>
             {
                 resData && resData.length > 0
-                ?resData.map((item, index) => (
+                ?resData.map((items, index) => (
                     isEdit && editId === index
-                    ?<CustRow key = { index } isEven = { index % 2 === 0 }>
+                    ?<CustRow key = { index } iseven = { index % 2 === 0 }>
                         <CustColmin>
                             <TiTick style = {{ fontSize: "25px", cursor: 'pointer' }} onClick={ () => { handleTick() } } />
                         </CustColmin>
@@ -186,14 +199,18 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                         {
                             Array.from(tmpMap).map(([key, [value, setValue]]) => (
                                 <CustCol>
-                                    <FormControl type = "text" name = { key } value = { value } onChange = { setValue } />
+                                    {
+                                        key === "account"
+                                        ?<Custtext>{value}</Custtext>
+                                        :<FormControl type = "text" name = { key } value = { value } onChange = { setValue } />
+                                    } 
                                 </CustCol>
                             ))
                         }
                     </CustRow>
-                    :<CustRow key = { index } isEven = { index % 2 === 0 }>
+                    :<CustRow key = { index } iseven = { index % 2 === 0 }>
                         <CustColmin>
-                            <CiEdit style={{ cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
+                            <CiEdit style={{ fontSize: "20px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
                         </CustColmin>
                         <CustColmin>
                             <Form.Check 
@@ -205,24 +222,13 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                 onChange={() => {  }}
                             />
                         </CustColmin>
-                        <CustCol>
-                            <Custtext>{item.name}</Custtext>
+                        {
+                            items.map(item => (
+                                <CustCol>
+                            <Custtext>{item}</Custtext>
                         </CustCol>
-                        <CustCol>
-                            <Custtext>{item.depName}</Custtext>
-                        </CustCol>
-                        <CustCol>
-                            <Custtext>{item.empId}</Custtext>
-                        </CustCol>
-                        <CustCol>
-                            <Custtext>{item.pasd}</Custtext>
-                        </CustCol>
-                        <CustCol>
-                            <Custtext>{item.email}</Custtext>
-                        </CustCol>
-                        <CustCol>
-                            <Custtext>{item.access}</Custtext>
-                        </CustCol>
+                            ))
+                        }
                     </CustRow>
                 ))
                 :<></>

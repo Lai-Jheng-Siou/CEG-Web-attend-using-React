@@ -18,7 +18,11 @@ router.post(process.env.REACT_APP_GetUserInfo, (req, res) => {
           res.status(500).json({ success: false, error: "數據庫請求錯誤" });
         } else {
           // dbResults.page = 
-          res.json(dbResults)
+          let ary = []
+          dbResults.forEach(item => {
+            ary.push([item.empId, item.pasd, item.name, item.depName, item.email, item.access])
+          })
+          res.json(ary)
         }
       })
     }else {
