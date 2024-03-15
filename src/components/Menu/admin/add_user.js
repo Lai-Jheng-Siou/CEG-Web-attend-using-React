@@ -50,16 +50,22 @@ function Add_user() {
             <ModalForm>
                 <FormLabel htmlFor="account">使用者帳號</FormLabel>
                 <FormInput id="account"></FormInput>
+
                 <FormLabel htmlFor="password">使用者密碼</FormLabel>
                 <FormInput id="password"></FormInput>
+
                 <FormLabel htmlFor="userName">姓名</FormLabel>
                 <FormInput id="userName"></FormInput>
+
                 <FormLabel htmlFor="department">部門</FormLabel>
                 <Select options={ departmentOption } />
+
                 <FormLabel htmlFor="userEmail">信箱</FormLabel>
                 <FormInput id="userEmail"></FormInput>
+
                 <FormLabel htmlFor="userAccess">權限</FormLabel>
                 <Select options={ accessOption } />
+
                  <DivBtn>
                     <Button onClick={sendSubmit}>送出</Button>{" "}
                     <Button variant="danger">取消</Button>

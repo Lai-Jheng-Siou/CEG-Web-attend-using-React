@@ -12,6 +12,9 @@ import { ImCross } from "react-icons/im";
 import { FormControl } from "../../Customize_Tool/Cust_UI";
 import axiosInstance from "../../Instance/axiosInstance";
 
+import Select from 'react-select'
+import { departmentOption, accessOption } from "../../Customize_Tool/selectOptions";
+
 
 const CustCon = styled(Container)`
     margin-top: 20px;
@@ -77,8 +80,6 @@ const MobileColFix = styled(Col)`
 function GetUserInfo(props) {  //傳入參數需有 表格title, token, api address
     const { resData, token } = props
 
-    const titleText = ['帳號', '密碼', '姓名', '部門', '信箱', '權限']
-
     const [ checkBtn, setCheckBtn ] = useState(new Set())  //存放選取框是否勾選
     
     //單一選取框操作
@@ -110,6 +111,33 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
         })
     }
 
+    const titleTextObj = {
+        'account': '帳號',
+        'password': '密碼',
+        'name': '姓名',
+        'department': '部門',
+        'email': '信箱',
+        'access': '權限'
+    }
+
+    //編輯暫存
+    const textInfo = {
+        account: '',
+        password: '',
+        name: '',
+        department: '',
+        email: '',
+        access: ''
+    }
+
+    const [tmpInfo, setTmpInfo] = useState(textInfo)
+
+    const changeTmpInfo = (part, info) => {
+        const originInfo = {...tmpInfo}
+        originInfo[part] = info
+        setTmpInfo(originInfo)
+    }
+
     //編輯鍵操作
     const [ isEdit, setIsEdit ] = useState(false)  //確認狀態是否在編輯
     const [ editId, setEditId ] = useState(-1)  //存放編輯中ID
@@ -119,12 +147,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
         setIsTick(!isTick)
 
         if(isTick) {
-            const tmp = []
-            for(let i of tmpMap.entries()) {
-                tmp.push(i[1][0])
-            }
-
-            axiosInstance('/alterUser', { empToken: token, newInfo: tmp})
+            axiosInstance('/alterUser', { empToken: token, newInfo: tmpInfo})
             .then(res => {
                 if(res.data.isSuccess) {
                     //如果成功返回 將tmp資料修改進當前表格
@@ -135,9 +158,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
             })
             .finally(() => {
                 //不管成功與否 清除tmp表格  並解除修改模式
-                for(let [, setValue] of tmpMap.values()) {
-                    setValue('')
-                }
+                setTmpInfo(textInfo)
                 setEditId(-1)
                 setIsEdit(false)
                 setDis_checkBtn(false)
@@ -146,34 +167,11 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
     }
 
 
-    //編輯暫存
-    const [ tmpName, setTmpName ] = useState('')
-    const [ depName, setDepName ] = useState('')
-    const [ empAcc, setEmpAcc ] = useState('')
-    const [ empPasd, setEmpPasd ] = useState('')
-    const [ empEmail, setEmpEmail ] = useState('')
-    const [ empAccess, setEmpAccess ] = useState('')
-
-    const tmpMap = new Map()  //集中裝存暫存資料 以方便迭代
-    tmpMap.set('account', [empAcc, setEmpAcc])
-    tmpMap.set('password', [empPasd, setEmpPasd])
-    tmpMap.set('name', [tmpName, setTmpName])
-    tmpMap.set('depName', [depName, setDepName])
-    tmpMap.set('email', [empEmail, setEmpEmail])
-    tmpMap.set('access', [empAccess, setEmpAccess])
-
     const handleEdit = (index) => {
         if (!isEdit) {
-            for (let indexId = 0; indexId < resData.length; indexId++) {
-                const items = resData[indexId];
-                if (index === indexId) {
-                    setEmpAcc(items[0]);
-                    setEmpPasd(items[1]);
-                    setTmpName(items[2]);
-                    setDepName(items[3]);
-                    setEmpEmail(items[4]);
-                    setEmpAccess(items[5]);
-                }
+            if (index < resData.length) {
+                const updatedInfo = resData[index];
+                setTmpInfo({...tmpInfo, ...updatedInfo});
             }
         }
         setIsEdit(!isEdit)
@@ -181,129 +179,149 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
         setEditId(index)
     }
 
+    function ChooseRWD(props) {     //共用JSX
+        const {keys} = props
+
+        if(keys === 'department' || keys === 'access') {
+            const option = keys === 'department' ?departmentOption :accessOption
+            return (
+                <Select options={option}/>
+            )
+        }else if(keys === 'account') {
+            return (
+                <MobileText>{tmpInfo[keys]}</MobileText>
+            )
+        }else {
+            return (
+                <FormControl 
+                    type = "text"
+                    name = { keys }
+                    value = { tmpInfo[keys] }
+                    onChange = { e => {changeTmpInfo(keys, e)} }
+                />
+            )
+        }
+    }
+
+    function DesktopJSX() {  //大螢幕顯示這邊
+        return (
+            <CustCon>
+                <CustRow key={"head"}>
+                    <CustColmin>編輯</CustColmin>
+                    <CustColmin>
+                        <Form.Check 
+                            type = "checkbox"
+                            name = "titleChecked"
+                            disabled = {dis_checkBtn}
+                            checked = { checkBtn.size }
+                            onClick={() => {click_allCheckBtn()}}
+                            onChange={() => {  }}
+                        />
+                    </CustColmin>
+                    {
+                        Object.entries(titleTextObj).map(([, value]) => (
+                            <CustCol><Custtext>{value}</Custtext></CustCol>
+                        ))
+                    }
+                </CustRow>
+                {
+                    resData && resData.length > 0
+                    ?resData.map((items, index) => (
+                        isEdit && editId === index
+                        ?<CustRow key = { index } iseven = { index % 2 === 0 }>
+                            <CustColmin>
+                                <TiTick style = {{ fontSize: "25px", cursor: 'pointer' }} onClick={ () => { handleTick() } } />
+                            </CustColmin>
+                            <CustColmin>
+                                <ImCross style = {{ fontSize: "15px", cursor: 'pointer' }} onClick = { () => { handleEdit(-1) } } />
+                            </CustColmin>
+                            {
+                                Object.entries(titleTextObj).map(([key], index) => (
+                                    <CustCol key = {index}>
+                                        <ChooseRWD keys = {key} />
+                                    </CustCol>
+                                ))
+                            }
+                        </CustRow>
+                        :<CustRow key = { index } iseven = { index % 2 === 0 }>
+                            <CustColmin>
+                                <CiEdit style={{ fontSize: "20px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
+                            </CustColmin>
+                            <CustColmin>
+                                <Form.Check 
+                                    type = "checkbox"
+                                    name = "singleChecked"
+                                    disabled = {dis_checkBtn}
+                                    checked = {checkBtn.has(index)}
+                                    onClick={() => click_singleCheckBtn(index)}
+                                    onChange={() => {  }}
+                                />
+                            </CustColmin>
+                            {
+                                Object.entries(titleTextObj).map(([key]) => (
+                                    <CustCol><Custtext>{items[key]}</Custtext></CustCol>
+                                ))
+                            }
+                        </CustRow>
+                    ))
+                    :<></>
+                }
+            </CustCon>
+        )
+    }
+
+    function MobileJSX() {  //手機幕顯示這邊
+        return (
+            <CustCon>
+                {  
+                    resData && resData.length > 0
+                    ?resData.map((items, index) => (
+                        isEdit && editId === index
+                        ?<MobileRow>
+                            <MobileColFix>
+                                <TiTick style = {{ fontSize: "30px", cursor: 'pointer' }} onClick={ () => { handleTick() } } />
+                                <ImCross style = {{ fontSize: "18px", cursor: 'pointer', margin: "5px" }} onClick = { () => { handleEdit(-1) } } />
+                            </MobileColFix>
+                            {
+                                Object.entries(titleTextObj).map(([key, value], index) => (
+                                    <MobileCol key = {index}>
+                                        <MobileText>{value}</MobileText>
+                                        <ChooseRWD keys = {key} />
+                                    </MobileCol>
+                                ))
+                            }
+                        </MobileRow>
+                        :<MobileRow>
+                            <MobileColFix>
+                                <Form.Check 
+                                    style={{fontSize: "25px"}}
+                                    type = "checkbox"
+                                    name = "singleChecked"
+                                    disabled = {dis_checkBtn}
+                                    checked = {checkBtn.has(index)}
+                                    onClick={() => click_singleCheckBtn(index)}
+                                    onChange={() => {  }}
+                                />
+                                <CiEdit style={{ fontSize: "30px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
+                            </MobileColFix>
+                            {
+                                Object.entries(titleTextObj).map(([key, value]) => (
+                                    <CustCol><Custtext>{value}: {items[key]}</Custtext></CustCol>
+                                ))
+                            }
+                        </MobileRow>
+                    ))
+                    :<></>
+                }
+            </CustCon>
+        )
+    }
     
     return (
-        <CustCon>
-            <CustRow key={"head"}>
-                <CustColmin>編輯</CustColmin>
-                <CustColmin>
-                    <Form.Check 
-                        type = "checkbox"
-                        name = "titleChecked"
-                        disabled = {dis_checkBtn}
-                        checked = { checkBtn.size }
-                        onClick={() => {click_allCheckBtn()}}
-                        onChange={() => {  }}
-                    />
-                </CustColmin>
-                {
-                    titleText.map(text => (
-                        <CustCol><Custtext>{text}</Custtext></CustCol>
-                    ))
-                }
-            </CustRow>
-            {  //大螢幕顯示這邊
-                resData && resData.length > 0
-                ?resData.map((items, index) => (
-                    isEdit && editId === index
-                    ?<CustRow key = { index } iseven = { index % 2 === 0 }>
-                        <CustColmin>
-                            <TiTick style = {{ fontSize: "25px", cursor: 'pointer' }} onClick={ () => { handleTick() } } />
-                        </CustColmin>
-                        <CustColmin>
-                            <ImCross style = {{ fontSize: "15px", cursor: 'pointer' }} onClick = { () => { handleEdit(-1) } } />
-                        </CustColmin>
-                        {
-                            Array.from(tmpMap).map(([key, [value, setValue]]) => (
-                                <CustCol>
-                                    {
-                                        key === "account"
-                                        ?<Custtext>{value}</Custtext>
-                                        :<FormControl type = "text" name = { key } value = { value } onChange = { setValue } />
-                                    } 
-                                </CustCol>
-                            ))
-                        }
-                    </CustRow>
-                    :<CustRow key = { index } iseven = { index % 2 === 0 }>
-                        <CustColmin>
-                            <CiEdit style={{ fontSize: "20px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
-                        </CustColmin>
-                        <CustColmin>
-                            <Form.Check 
-                                type = "checkbox"
-                                name = "singleChecked"
-                                disabled = {dis_checkBtn}
-                                checked = {checkBtn.has(index)}
-                                onClick={() => click_singleCheckBtn(index)}
-                                onChange={() => {  }}
-                            />
-                        </CustColmin>
-                        {
-                            items.map(item => (
-                                <CustCol>
-                                    <Custtext>{item}</Custtext>
-                                </CustCol>
-                            ))
-                        }
-                    </CustRow>
-                ))
-                :<></>
-            }
-
-            {  //小螢幕顯示這邊
-                resData && resData.length > 0
-                ?resData.map((items, index) => (
-                    isEdit && editId === index
-                    ?<MobileRow>
-                        <MobileColFix>
-                            <TiTick style = {{ fontSize: "30px", cursor: 'pointer' }} onClick={ () => { handleTick() } } />
-                            <ImCross style = {{ fontSize: "18px", cursor: 'pointer', margin: "5px" }} onClick = { () => { handleEdit(-1) } } />
-                        </MobileColFix>
-                        {
-                            Array.from(tmpMap).map(([key, [value, setValue]], index) => (
-                                <MobileCol>
-                                    {
-                                        key === "account"
-                                        ?<MobileText>{value}</MobileText>
-                                        :<>
-                                            <MobileText>{titleText[index]}</MobileText>
-                                            <FormControl 
-                                                type = "text" 
-                                                name = { key } 
-                                                value = { value } 
-                                                onChange = { setValue } 
-                                            />
-                                        </>
-                                    } 
-                                </MobileCol>
-                            ))
-                        }
-                    </MobileRow>
-                    :<MobileRow>
-                        <MobileColFix>
-                            <Form.Check 
-                                style={{fontSize: "25px"}}
-                                type = "checkbox"
-                                name = "singleChecked"
-                                disabled = {dis_checkBtn}
-                                checked = {checkBtn.has(index)}
-                                onClick={() => click_singleCheckBtn(index)}
-                                onChange={() => {  }}
-                            />
-                            <CiEdit style={{ fontSize: "30px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
-                        </MobileColFix>
-                        {
-                            titleText.map((text, index) => (
-                                <MobileCol>{text}:  {items[index]}</MobileCol>
-                            ))
-                        }
-                    </MobileRow>
-                ))
-                :<></>
-            }
-
-        </CustCon>
+        <>
+            <DesktopJSX />
+            <MobileJSX />
+        </>
     )
 }
 

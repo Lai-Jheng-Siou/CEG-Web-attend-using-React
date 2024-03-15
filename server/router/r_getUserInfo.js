@@ -17,10 +17,16 @@ router.post(process.env.REACT_APP_GetUserInfo, (req, res) => {
         if (err) {
           res.status(500).json({ success: false, error: "數據庫請求錯誤" });
         } else {
-          // dbResults.page = 
           let ary = []
           dbResults.forEach(item => {
-            ary.push([item.empId, item.pasd, item.name, item.depName, item.email, item.access])
+            let obj = {}
+            obj['account'] = item.empId
+            obj['password'] = item.pasd
+            obj['name'] = item.name
+            obj['department'] = item.depName
+            obj['email'] = item.email
+            obj['access'] = item.access
+            ary.push(obj)
           })
           res.json(ary)
         }
