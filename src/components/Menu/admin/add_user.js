@@ -2,6 +2,9 @@ import styled from "styled-components";
 import { Container, Button, Form } from "react-bootstrap";
 import { Modal } from "react-responsive-modal";
 import { useEffect, useState } from "react";
+import Select from 'react-select'
+
+import { accessOption, departmentOption } from "../../Customize_Tool/selectOptions";
 
 const CustCon = styled(Container)`
     margin-top: 20px;
@@ -13,8 +16,15 @@ const ModalForm = styled.div`
     font-family: Song;
 `
 const FormLabel = styled(Form.Label)`
+    margin-top: 20px;
 `
 const FormInput = styled(Form.Control)`
+`
+
+const DivBtn = styled.div`
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
 `
 
 function Add_user() {
@@ -29,7 +39,6 @@ function Add_user() {
     }, [submit])
 
 
-
     return (
         <>
         <CustCon>
@@ -39,27 +48,22 @@ function Add_user() {
         <Modal open={showModal} onClose={switchModal} center>
             <h2>新增使用者</h2>
             <ModalForm>
-                <FormLabel htmlFor="userAccount">使用者帳號</FormLabel>
-                <FormInput id="userAccount"></FormInput>
+                <FormLabel htmlFor="account">使用者帳號</FormLabel>
+                <FormInput id="account"></FormInput>
                 <FormLabel htmlFor="password">使用者密碼</FormLabel>
                 <FormInput id="password"></FormInput>
                 <FormLabel htmlFor="userName">姓名</FormLabel>
                 <FormInput id="userName"></FormInput>
+                <FormLabel htmlFor="department">部門</FormLabel>
+                <Select options={ departmentOption } />
                 <FormLabel htmlFor="userEmail">信箱</FormLabel>
                 <FormInput id="userEmail"></FormInput>
                 <FormLabel htmlFor="userAccess">權限</FormLabel>
-                <Form.Check
-                    type="radio"
-                    label="一般"
-                 />
-                 <Form.Check
-                    type="radio"
-                    label="管理"
-                 />
-                 <div>
+                <Select options={ accessOption } />
+                 <DivBtn>
                     <Button onClick={sendSubmit}>送出</Button>{" "}
                     <Button variant="danger">取消</Button>
-                 </div>
+                 </DivBtn>
             </ModalForm>
         </Modal>
         </>

@@ -9,7 +9,7 @@ import { CiEdit } from "react-icons/ci";
 import { TiTick } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
 
-import { FormControl } from "../../../Customize_Tool/Cust_UI";
+import { FormControl } from "../../Customize_Tool/Cust_UI";
 import axiosInstance from "../../Instance/axiosInstance";
 
 
@@ -52,12 +52,14 @@ const MobileRow = styled(Row)`
     @media ${device.mobile} {
         display: block;
         border: 3px solid #000000;
-        border-radius: 10px 10px 0px 0px;
+        border-radius: 10px;
         margin: 20px;
     }
 `
 const MobileCol = styled(Col)`
     display: flex;
+    border-top: 1px solid #000000;
+    padding: 5px;
 `
 const MobileText = styled.p`
     display: flex;
@@ -266,14 +268,18 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                         ?<MobileText>{value}</MobileText>
                                         :<>
                                             <MobileText>{titleText[index]}</MobileText>
-                                            <FormControl type = "text" name = { key } value = { value } onChange = { setValue } />
+                                            <FormControl 
+                                                type = "text" 
+                                                name = { key } 
+                                                value = { value } 
+                                                onChange = { setValue } 
+                                            />
                                         </>
                                     } 
                                 </MobileCol>
                             ))
                         }
                     </MobileRow>
-
                     :<MobileRow>
                         <MobileColFix>
                             <Form.Check 

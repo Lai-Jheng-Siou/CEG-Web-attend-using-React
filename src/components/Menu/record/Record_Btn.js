@@ -1,8 +1,8 @@
 import {React, useState} from "react"
 import { Button, Form } from "react-bootstrap"
 import styled from "styled-components"
-import { ExcelExport } from "../../../Customize_Tool/Excel"
-import { default as CustDialog } from "../../../Customize_Tool/ConfirmDialog"
+import { ExcelExport } from "../../Customize_Tool/Excel"
+import { default as CustDialog } from "../../Customize_Tool/ConfirmDialog"
 
 import { Modal } from "react-responsive-modal";
 import axiosInstance from "../../Instance/axiosInstance"

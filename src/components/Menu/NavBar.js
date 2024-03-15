@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 
 import { sidebarData } from "./sideBarItem";
-import CustDialog from "../../Customize_Tool/ConfirmDialog";
+import CustDialog from "../Customize_Tool/ConfirmDialog";
 import atdBtnContext from "./ATD/BtnContext"
 import AddAttendModal from "./ATD/AtdModal";
 
