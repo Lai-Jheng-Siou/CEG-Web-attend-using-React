@@ -1,5 +1,5 @@
-import {React, useState, useEffect} from "react"
-import { Container, Button, Form } from "react-bootstrap"
+import {React, useState} from "react"
+import { Button, Form } from "react-bootstrap"
 import styled from "styled-components"
 import { ExcelExport } from "../../../Customize_Tool/Excel"
 import { default as CustDialog } from "../../../Customize_Tool/ConfirmDialog"
@@ -63,7 +63,7 @@ export function RecordSearch (props){
                 setAttendInfo(res.data)
             })
             .catch(e => {
-    
+                console.log(e)
             })
             .finally(() => {
                 switchShow()

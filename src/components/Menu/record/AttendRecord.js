@@ -112,6 +112,8 @@ export function AttendRecord() {
         googleMapsApiKey: process.env.REACT_APP_Google_Api_Keys,
     })
 
+    const titleText = [[1, '員工編號'], [1, '員工姓名'], [2, '打卡日期'], [2, '打卡時間'], [2, '打卡大樓'], [4, '定位']]
+
     return (
         <CustCon>
             <div className="d-flex">
@@ -119,18 +121,17 @@ export function AttendRecord() {
                 <RecordExport attendInfo = { attendData } />
             </div>
             <CustTitleR>
-                    <CustTitleC xs={12} md={1}>員工編號</CustTitleC>
-                    <CustTitleC xs={12} md={1}>員工姓名</CustTitleC>
-                    <CustTitleC xs={12} md={2}>打卡日期</CustTitleC>
-                    <CustTitleC xs={12} md={2}>打卡時間</CustTitleC>
-                    <CustTitleC xs={12} md={2}>打卡大樓</CustTitleC>
-                    <CustTitleC xs={12} md={4}>定位</CustTitleC>
+                {
+                    titleText.map(textAry => (
+                        <CustTitleC md = { textAry[0] }>{ textAry[1] }</CustTitleC>
+                    ))
+                }
             </CustTitleR>
             {
                 attendData && attendData.length > 0
                 ?attendData.map((items, index) => (
                     <div>
-                        <MobileRWD items = {items} index = {index} isLoaded = {isLoaded} />
+                        <MobileRWD titleText = {titleText} items = {items} index = {index} isLoaded = {isLoaded} />
                         <LaptopRWD items = {items} index = {index} isLoaded = {isLoaded} />
                     </div>
                 ))
@@ -148,12 +149,12 @@ function LaptopRWD(props) {  //大螢幕顯示這個
 
     return (
         <CustRow key={index}>
-            <CustCol xs={12} md={1}>{items[0]}</CustCol>
-            <CustCol xs={12} md={1}>{items[1]}</CustCol>
-            <CustCol xs={12} md={2}>{items[2]}</CustCol>
-            <CustCol xs={12} md={2}>{items[3]}</CustCol>
-            <CustCol xs={12} md={2}>{items[4]}</CustCol>
-            <CustCol xs={12} md={4}>
+            <CustCol md={1}>{items[0]}</CustCol>
+            <CustCol md={1}>{items[1]}</CustCol>
+            <CustCol md={2}>{items[2]}</CustCol>
+            <CustCol md={2}>{items[3]}</CustCol>
+            <CustCol md={2}>{items[4]}</CustCol>
+            <CustCol md={4}>
                 {
                     !isLoaded
                     ?<div>Loading...</div>
@@ -177,34 +178,35 @@ function LaptopRWD(props) {  //大螢幕顯示這個
 }
 
 function MobileRWD(props) {  //手機螢幕顯示這個
-    const { items, index, isLoaded } = props
+    const { titleText, items, index, isLoaded } = props
 
     return (
         <MobileRow key={index}>
-            <MobileCol>員工編號: {items[0]}</MobileCol>
-            <MobileCol>員工姓名: {items[1]}</MobileCol>
-            <MobileCol>打卡日期: {items[2]}</MobileCol>
-            <MobileCol>打卡時間: {items[3]}</MobileCol>
-            <MobileCol>打卡大樓: {items[4]}</MobileCol>
-            <MobileCol>定位: 
-                {
-                    !isLoaded
-                    ?<div>Loading...</div>
-                    :<GoogleMap
-                        zoom = {14}
-                        center = {{ lat: parseFloat(items[5].split(',')[0]), lng: parseFloat(items[5].split(',')[1]) }}
-                        //   mapContainerClassName = 可以建立className, 設定地圖長寬...
-                        options = {{
-                            disableDefaultUI: true,  // 禁用默认的 UI 控件
-                            zoomControl: true,      // 启用缩放控件
-                        }}
-                        mapContainerStyle = {{ width: 'auto', height: '135px', border: '1px solid #000000' }}
-                        //   onLoad={handleMapLoad} loading事件處理，地圖加載時進行初始化操作
-                        >
-                        <MarkerF position={{ lat: parseFloat(items[5].split(',')[0]), lng: parseFloat(items[5].split(',')[1]) }} />
-                    </GoogleMap>
-                }
-            </MobileCol>
+            {
+                titleText.map((textAry, index) => (
+                    index !== 5
+                    ?<MobileCol>{textAry[1]}: {items[index]}</MobileCol>
+                    :<MobileCol>{textAry[1]}: {items[index]}
+                        {
+                            !isLoaded
+                            ?<div>Loading...</div>
+                            :<GoogleMap
+                                zoom = {14}
+                                center = {{ lat: parseFloat(items[5].split(',')[0]), lng: parseFloat(items[5].split(',')[1]) }}
+                                //   mapContainerClassName = 可以建立className, 設定地圖長寬...
+                                options = {{
+                                    disableDefaultUI: true,  // 禁用默认的 UI 控件
+                                    zoomControl: true,      // 启用缩放控件
+                                }}
+                                mapContainerStyle = {{ width: 'auto', height: '135px', border: '1px solid #000000' }}
+                                //   onLoad={handleMapLoad} loading事件處理，地圖加載時進行初始化操作
+                                >
+                                <MarkerF position={{ lat: parseFloat(items[5].split(',')[0]), lng: parseFloat(items[5].split(',')[1]) }} />
+                            </GoogleMap>
+                        }
+                    </MobileCol>
+                ))
+            }
         </MobileRow>
     )
 }

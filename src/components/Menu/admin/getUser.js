@@ -19,13 +19,13 @@ const CustCon = styled(Container)`
 const CustRow = styled(Row)`
     border: 1px solid #000000;
     background-color: ${(props) => (props.iseven ? '#D3D3D3' : '#fff')};
+
+    @media ${device.mobile} {
+        display: none;
+    }
 `
 const CustCol = styled(Col)`
     border: 1px solid #000000;
-
-    @media ${device.mobile} {
-        border: 0px
-    }
 `
 const CustColmin = styled(Col)`
     border: 2px solid #000000;
@@ -34,26 +34,41 @@ const CustColmin = styled(Col)`
     justify-content: center;
     align-items: center;
     font-size: 15px;
-
-    @media ${device.mobile} {
-        max-width: 40px;
-        font-size: 20px;
-    }
 `
 const Custtext = styled.p`
     display: flex;
     align-items: center;
-    padding-top: 15px;
+    padding-top: 10px;
     font-size: 14px;
-
-    @media ${device.mobile} {
-        font-size: 10px;
-    }
 `
 
 const MobileRow = styled(Row)`
+    @media ${device.tablet} {
+        display: none;
+    }
+    @media ${device.laptop} {
+        display: none;
+    }
+    @media ${device.mobile} {
+        display: block;
+        border: 3px solid #000000;
+        border-radius: 10px 10px 0px 0px;
+        margin: 20px;
+    }
 `
 const MobileCol = styled(Col)`
+    display: flex;
+`
+const MobileText = styled.p`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    margin: 10px;
+`
+const MobileColFix = styled(Col)`
+    display: flex;
+    justify-content: space-between;
 `
 
 
@@ -185,7 +200,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                     ))
                 }
             </CustRow>
-            {
+            {  //大螢幕顯示這邊
                 resData && resData.length > 0
                 ?resData.map((items, index) => (
                     isEdit && editId === index
@@ -225,14 +240,63 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                         {
                             items.map(item => (
                                 <CustCol>
-                            <Custtext>{item}</Custtext>
-                        </CustCol>
+                                    <Custtext>{item}</Custtext>
+                                </CustCol>
                             ))
                         }
                     </CustRow>
                 ))
                 :<></>
             }
+
+            {  //小螢幕顯示這邊
+                resData && resData.length > 0
+                ?resData.map((items, index) => (
+                    isEdit && editId === index
+                    ?<MobileRow>
+                        <MobileColFix>
+                            <TiTick style = {{ fontSize: "30px", cursor: 'pointer' }} onClick={ () => { handleTick() } } />
+                            <ImCross style = {{ fontSize: "18px", cursor: 'pointer', margin: "5px" }} onClick = { () => { handleEdit(-1) } } />
+                        </MobileColFix>
+                        {
+                            Array.from(tmpMap).map(([key, [value, setValue]], index) => (
+                                <MobileCol>
+                                    {
+                                        key === "account"
+                                        ?<MobileText>{value}</MobileText>
+                                        :<>
+                                            <MobileText>{titleText[index]}</MobileText>
+                                            <FormControl type = "text" name = { key } value = { value } onChange = { setValue } />
+                                        </>
+                                    } 
+                                </MobileCol>
+                            ))
+                        }
+                    </MobileRow>
+
+                    :<MobileRow>
+                        <MobileColFix>
+                            <Form.Check 
+                                style={{fontSize: "25px"}}
+                                type = "checkbox"
+                                name = "singleChecked"
+                                disabled = {dis_checkBtn}
+                                checked = {checkBtn.has(index)}
+                                onClick={() => click_singleCheckBtn(index)}
+                                onChange={() => {  }}
+                            />
+                            <CiEdit style={{ fontSize: "30px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
+                        </MobileColFix>
+                        {
+                            titleText.map((text, index) => (
+                                <MobileCol>{text}:  {items[index]}</MobileCol>
+                            ))
+                        }
+                    </MobileRow>
+                ))
+                :<></>
+            }
+
         </CustCon>
     )
 }
