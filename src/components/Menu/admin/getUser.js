@@ -111,14 +111,14 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
         })
     }
 
-    const titleTextObj = {
-        'account': '帳號',
-        'password': '密碼',
-        'name': '姓名',
-        'department': '部門',
-        'email': '信箱',
-        'access': '權限'
-    }
+    const titleTextAry = [
+        { id: 'account', label: '帳號', type: 'text' },
+        { id: 'password', label: '密碼', type: 'text' },
+        { id: 'name', label: '姓名', type: 'text' },
+        { id: 'department', label: '部門', type: 'select', option: departmentOption },
+        { id: 'email', label: '信箱', type: 'text' },
+        { id: 'access', label: '權限', type: 'select', option: accessOption },
+    ]
 
     //編輯暫存
     const textInfo = {
@@ -132,10 +132,10 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
 
     const [tmpInfo, setTmpInfo] = useState(textInfo)
 
-    const changeTmpInfo = (part, info) => {
-        const originInfo = {...tmpInfo}
-        originInfo[part] = info
-        setTmpInfo(originInfo)
+    const changeTmpInfo = (event) => {
+        const { name, value } = event.target
+
+        setTmpInfo({...tmpInfo, [name]: value})
     }
 
     //編輯鍵操作
@@ -143,7 +143,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
     const [ editId, setEditId ] = useState(-1)  //存放編輯中ID
     const [ dis_checkBtn, setDis_checkBtn ] = useState(false)  //當編輯時 禁用勾選框
     const [ isTick, setIsTick ] = useState(false)  //當按下勾選框時
-    const handleTick = () => {
+    const handleTick = () => {  //送出編輯中的資料
         setIsTick(!isTick)
 
         if(isTick) {
@@ -180,24 +180,24 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
     }
 
     function ChooseRWD(props) {     //共用JSX
-        const {keys} = props
+        const { field } = props
 
-        if(keys === 'department' || keys === 'access') {
-            const option = keys === 'department' ?departmentOption :accessOption
+        if(field.type === 'select') {
+            const option = field.option
             return (
                 <Select options={option}/>
             )
-        }else if(keys === 'account') {
+        }else if(field.id === 'account') {
             return (
-                <MobileText>{tmpInfo[keys]}</MobileText>
+                <MobileText>{tmpInfo[field.id]}</MobileText>
             )
         }else {
             return (
                 <FormControl 
-                    type = "text"
-                    name = { keys }
-                    value = { tmpInfo[keys] }
-                    onChange = { e => {changeTmpInfo(keys, e)} }
+                    type = {field.type}
+                    id = { field.id }
+                    value = { tmpInfo[field.id] }
+                    onChange = { changeTmpInfo }
                 />
             )
         }
@@ -219,8 +219,8 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                         />
                     </CustColmin>
                     {
-                        Object.entries(titleTextObj).map(([, value]) => (
-                            <CustCol><Custtext>{value}</Custtext></CustCol>
+                        titleTextAry.map((field,index) => (
+                            <CustCol key={index}><Custtext>{field.label}</Custtext></CustCol>
                         ))
                     }
                 </CustRow>
@@ -236,9 +236,9 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                 <ImCross style = {{ fontSize: "15px", cursor: 'pointer' }} onClick = { () => { handleEdit(-1) } } />
                             </CustColmin>
                             {
-                                Object.entries(titleTextObj).map(([key], index) => (
+                                titleTextAry.map((field, index)=> (
                                     <CustCol key = {index}>
-                                        <ChooseRWD keys = {key} />
+                                        <ChooseRWD keys = {field} />
                                     </CustCol>
                                 ))
                             }
@@ -258,8 +258,8 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                 />
                             </CustColmin>
                             {
-                                Object.entries(titleTextObj).map(([key]) => (
-                                    <CustCol><Custtext>{items[key]}</Custtext></CustCol>
+                                titleTextAry.map(field => (
+                                    <CustCol><Custtext>{items[field.id]}</Custtext></CustCol>
                                 ))
                             }
                         </CustRow>
@@ -277,16 +277,16 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                     resData && resData.length > 0
                     ?resData.map((items, index) => (
                         isEdit && editId === index
-                        ?<MobileRow>
+                        ?<MobileRow key={index}>
                             <MobileColFix>
                                 <TiTick style = {{ fontSize: "30px", cursor: 'pointer' }} onClick={ () => { handleTick() } } />
                                 <ImCross style = {{ fontSize: "18px", cursor: 'pointer', margin: "5px" }} onClick = { () => { handleEdit(-1) } } />
                             </MobileColFix>
                             {
-                                Object.entries(titleTextObj).map(([key, value], index) => (
+                                titleTextAry.map((field, index) => (
                                     <MobileCol key = {index}>
-                                        <MobileText>{value}</MobileText>
-                                        <ChooseRWD keys = {key} />
+                                        <MobileText>{field.label}</MobileText>
+                                        <ChooseRWD keys = {field} />
                                     </MobileCol>
                                 ))
                             }
@@ -305,8 +305,8 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                 <CiEdit style={{ fontSize: "30px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
                             </MobileColFix>
                             {
-                                Object.entries(titleTextObj).map(([key, value]) => (
-                                    <CustCol><Custtext>{value}: {items[key]}</Custtext></CustCol>
+                                titleTextAry.map((field, index) => (
+                                    <CustCol key={index}><Custtext>{field.label}: {items[field.id]}</Custtext></CustCol>
                                 ))
                             }
                         </MobileRow>

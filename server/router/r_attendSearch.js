@@ -10,14 +10,14 @@ router.post(process.env.REACT_APP_GetAttendSearch, (req, res) => {
 
     let tokenDecode = token.tokenParse(empToken)
     if(tokenDecode) {
-        let sqlKeyIn = `select e.empId, 
+        let sqlKeyIn = `SELECT e.empId, 
         DATE_FORMAT(e.atdDate, '%Y/%m/%d') AS atdDate,
         e.atdTime,
         e.Ip,
         e.BuildId,
         ei.name 
-        from EMPATTEND e left join EMPINFO ei on e.empId = ei.empId
-        where 
+        FROM EMPATTEND e left join EMPINFO ei on e.empId = ei.empId
+        WHERE 
         `
         let value = []
 

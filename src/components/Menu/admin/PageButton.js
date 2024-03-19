@@ -62,7 +62,7 @@ function PageBtn(props) {
                     index === 2
                     ?<Form>{nowPage} / {totalPage}</Form>
                     :<Btn 
-                        key={item}
+                        key={index}
                         variant={color} 
                         disabled={index < 2 ?disLast :disNext} 
                         onClick={() => { editPage(st[index]) }}

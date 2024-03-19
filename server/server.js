@@ -4,8 +4,11 @@ require('dotenv').config({ path: '../.env' });
 const Router_login = require('./router/r_login')
 const Router_attend = require('./router/r_attend')
 const Router_record = require('./router/r_record')
+
+const Router_createUserInfo = require('./router/r_createUserInfo')
 const Router_getUerInfo = require('./router/r_getUserInfo')
 const Router_alterUserInfo = require('./router/r_alterUserInfo')
+
 const Router_getTableLen = require('./router/r_tableLen');
 const Router_attendSearch = require('./router/r_attendSearch')
 
@@ -32,6 +35,7 @@ app.use('/', Router_attendSearch)  //打卡記錄搜尋
 
 app.use('/', Router_getUerInfo) //取得員工資料
 app.use('/', Router_alterUserInfo)  //更新員工資料
+app.use('/', Router_createUserInfo)  //新增員工資料
 
 app.use('/', Router_getTableLen)  //取得表格長度
 

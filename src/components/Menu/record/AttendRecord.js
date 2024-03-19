@@ -185,8 +185,8 @@ function MobileRWD(props) {  //手機螢幕顯示這個
             {
                 titleText.map((textAry, index) => (
                     index !== 5
-                    ?<MobileCol>{textAry[1]}: {items[index]}</MobileCol>
-                    :<MobileCol>{textAry[1]}: {items[index]}
+                    ?<MobileCol key={index}>{textAry[1]}: {items[index]}</MobileCol>
+                    :<MobileCol key={index}>{textAry[1]}: {items[index]}
                         {
                             !isLoaded
                             ?<div>Loading...</div>

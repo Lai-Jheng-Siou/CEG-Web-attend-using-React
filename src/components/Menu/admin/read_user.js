@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../../Instance/axiosInstance";
 
 import { TopItems } from "../TopItem";
-import Add_user from "./add_user";
+import AddUser from "./addUser";
 import GetUserInfo from "./getUser";
 import styled from "styled-components";
 import PageBtn from "./PageButton";
@@ -53,12 +53,10 @@ function Userinfo() {
     }, [nowPage])
 
 
-
-
     return(
         <>
             <TopItems></TopItems>
-            <Add_user></Add_user>
+            <AddUser></AddUser>
             <GetUserInfo resData = { resData } token = { token } />
             <PageDiv>
                 <PageBtn

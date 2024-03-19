@@ -10,9 +10,10 @@ router.post('/alterUser', (req, res) => {
     let tokenDecode = token.tokenParse(empToken)
 
     if(!tokenDecode.error) {
-        const sqoKeyIn = `SELECT `
+        const sqlKeyIn = 
 
 
+        conn.query(sqlKeyIn)
 
 
     }else {
