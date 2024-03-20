@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styled from "styled-components";
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 
 import { device } from "../../rwdSize"
 
@@ -8,12 +8,14 @@ import { device } from "../../rwdSize"
 import { CiEdit } from "react-icons/ci";  
 import { TiTick } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
+import { MdDeleteForever } from "react-icons/md";
 
 import { FormControl } from "../../Customize_Tool/Cust_UI";
 import axiosInstance from "../../Instance/axiosInstance";
 
 import Select from 'react-select'
 import { departmentOption, accessOption } from "../../Customize_Tool/selectOptions";
+import { default as CustDialog } from "../../Customize_Tool/ConfirmDialog"
 
 
 const CustCon = styled(Container)`
@@ -78,38 +80,7 @@ const MobileColFix = styled(Col)`
 
 
 function GetUserInfo(props) {  //傳入參數需有 表格title, token, api address
-    const { resData, token } = props
-
-    const [ checkBtn, setCheckBtn ] = useState(new Set())  //存放選取框是否勾選
-    
-    //單一選取框操作
-    const click_singleCheckBtn = (index) => {  
-        setCheckBtn((prevCheckBtn) => {
-            const newCheckBtn = new Set(prevCheckBtn);
-        
-            if (newCheckBtn.has(index)) {
-                newCheckBtn.delete(index); // 如果已經存在，刪除
-            } else {
-                newCheckBtn.add(index); // 如果不存在，新增
-            }
-        
-            return newCheckBtn;
-          });
-    }
-    //全部選取框操作
-    const click_allCheckBtn = () => {
-        setCheckBtn((prevCheckBtn) => {
-            const newCheckBtn = new Set(prevCheckBtn)
-
-            if(newCheckBtn.size === 0) {
-                let len = resData.length
-                for(let i = 0; i < len; i++) { newCheckBtn.add(i) }
-            }else {
-                newCheckBtn.clear()
-            }
-            return newCheckBtn
-        })
-    }
+    const { resData, setResData, token } = props
 
     const titleTextAry = [
         { id: 'account', label: '帳號', type: 'text' },
@@ -142,9 +113,13 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
     const [ isEdit, setIsEdit ] = useState(false)  //確認狀態是否在編輯
     const [ editId, setEditId ] = useState(-1)  //存放編輯中ID
     const [ dis_checkBtn, setDis_checkBtn ] = useState(false)  //當編輯時 禁用勾選框
-    const [ isTick, setIsTick ] = useState(false)  //當按下勾選框時
+    const isTick = useRef(false)  //是否按下送出編輯資料
+    const switchTickStatus = () => {  //切換狀態
+        isTick.current = !isTick.current
+    }
+
     const handleTick = () => {  //送出編輯中的資料
-        setIsTick(!isTick)
+        switchTickStatus()
 
         if(isTick) {
             axiosInstance('/alterUser', { empToken: token, newInfo: tmpInfo})
@@ -162,10 +137,10 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                 setEditId(-1)
                 setIsEdit(false)
                 setDis_checkBtn(false)
+                switchTickStatus()
             })
         }
     }
-
 
     const handleEdit = (index) => {
         if (!isEdit) {
@@ -184,18 +159,15 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
 
         if(field.type === 'select') {
             const option = field.option
-            return (
-                <Select options={option}/>
-            )
+            return <Select options={option}/>
         }else if(field.id === 'account') {
-            return (
-                <MobileText>{tmpInfo[field.id]}</MobileText>
-            )
+            return <MobileText id={field.id}>{tmpInfo[field.id]}</MobileText>
         }else {
             return (
                 <FormControl 
                     type = {field.type}
                     id = { field.id }
+                    name = {field.id}
                     value = { tmpInfo[field.id] }
                     onChange = { changeTmpInfo }
                 />
@@ -208,16 +180,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
             <CustCon>
                 <CustRow key={"head"}>
                     <CustColmin>編輯</CustColmin>
-                    <CustColmin>
-                        <Form.Check 
-                            type = "checkbox"
-                            name = "titleChecked"
-                            disabled = {dis_checkBtn}
-                            checked = { checkBtn.size }
-                            onClick={() => {click_allCheckBtn()}}
-                            onChange={() => {  }}
-                        />
-                    </CustColmin>
+                    <CustColmin>移除</CustColmin>
                     {
                         titleTextAry.map((field,index) => (
                             <CustCol key={index}><Custtext>{field.label}</Custtext></CustCol>
@@ -238,7 +201,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                             {
                                 titleTextAry.map((field, index)=> (
                                     <CustCol key = {index}>
-                                        <ChooseRWD keys = {field} />
+                                        <ChooseRWD field = {field} />
                                     </CustCol>
                                 ))
                             }
@@ -248,14 +211,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                 <CiEdit style={{ fontSize: "20px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
                             </CustColmin>
                             <CustColmin>
-                                <Form.Check 
-                                    type = "checkbox"
-                                    name = "singleChecked"
-                                    disabled = {dis_checkBtn}
-                                    checked = {checkBtn.has(index)}
-                                    onClick={() => click_singleCheckBtn(index)}
-                                    onChange={() => {  }}
-                                />
+                                <MdDeleteForever style={{fontSize: "25px", cursor: "pointer"}} onClick = { () => switchIsShowDialog(index) } />
                             </CustColmin>
                             {
                                 titleTextAry.map(field => (
@@ -277,36 +233,28 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                     resData && resData.length > 0
                     ?resData.map((items, index) => (
                         isEdit && editId === index
-                        ?<MobileRow key={index}>
+                        ?<MobileRow key={items}>
                             <MobileColFix>
                                 <TiTick style = {{ fontSize: "30px", cursor: 'pointer' }} onClick={ () => { handleTick() } } />
                                 <ImCross style = {{ fontSize: "18px", cursor: 'pointer', margin: "5px" }} onClick = { () => { handleEdit(-1) } } />
                             </MobileColFix>
                             {
-                                titleTextAry.map((field, index) => (
-                                    <MobileCol key = {index}>
+                                titleTextAry.map(field => (
+                                    <MobileCol key = {field.id}>
                                         <MobileText>{field.label}</MobileText>
-                                        <ChooseRWD keys = {field} />
+                                        <ChooseRWD field = {field} />
                                     </MobileCol>
                                 ))
                             }
                         </MobileRow>
                         :<MobileRow>
                             <MobileColFix>
-                                <Form.Check 
-                                    style={{fontSize: "25px"}}
-                                    type = "checkbox"
-                                    name = "singleChecked"
-                                    disabled = {dis_checkBtn}
-                                    checked = {checkBtn.has(index)}
-                                    onClick={() => click_singleCheckBtn(index)}
-                                    onChange={() => {  }}
-                                />
+                                <MdDeleteForever style={{fontSize: "25px", cursor: "pointer"}} onClick = { () => switchIsShowDialog(index) } />
                                 <CiEdit style={{ fontSize: "30px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
                             </MobileColFix>
                             {
-                                titleTextAry.map((field, index) => (
-                                    <CustCol key={index}><Custtext>{field.label}: {items[field.id]}</Custtext></CustCol>
+                                titleTextAry.map(field => (
+                                    <CustCol key={field.id}><Custtext>{field.label}: {items[field.id]}</Custtext></CustCol>
                                 ))
                             }
                         </MobileRow>
@@ -316,11 +264,47 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
             </CustCon>
         )
     }
+
+    const testMsg = useRef("")
+    const delIndex = useRef(-1)
+    const [isShowDialog, setIsShowDialog] = useState(false)
+    const switchIsShowDialog = (index) => {
+        if(index >= 0) {
+            delIndex.current = index
+            testMsg.current = `${resData[index].account}`
+        }
+        setIsShowDialog(!isShowDialog)
+    }
+    const test = () => { 
+        axiosInstance.post(process.env.REACT_APP_DeleteUserInfo, { empToken: token, value: [testMsg.current] })
+        .then(res => {
+            if(res.data.success) {
+                const arr = [...resData]
+                arr.splice(delIndex.current, 1)
+                setResData(arr)
+            }
+        })
+        .catch(e => {
+            console.log(e)
+        })
+        .finally(() => {
+            switchIsShowDialog()
+            delIndex.current = -1
+        })
+    }
+    const testProps = {
+        title: "警告: 確定要刪除?",
+        msg: testMsg.current,
+        show: isShowDialog,
+        hideFunc: switchIsShowDialog,
+        clickConfirm: test
+    }
     
     return (
         <>
             <DesktopJSX />
             <MobileJSX />
+            <CustDialog prop = {testProps}  />
         </>
     )
 }

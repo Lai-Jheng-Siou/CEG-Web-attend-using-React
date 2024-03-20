@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Container, Button, Form } from "react-bootstrap";
 import { Modal } from "react-responsive-modal";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Select from 'react-select'
 import axiosInstance from "../../Instance/axiosInstance";
 
@@ -28,17 +28,11 @@ const DivBtn = styled.div`
     justify-content: center;
 `
 
-function Add_user() {
-    let userInfo = JSON.parse(sessionStorage.getItem(process.env.REACT_APP_localStorage))
-    const token = userInfo['token']
+function Add_user(props) {
+    const { token } = props
 
     const [showModal, setShowModal] = useState(false)
     const switchModal = () => { setShowModal(!showModal) }
-
-    const [isSending, setIsSending] = useState(false)
-    const switchSending = () => {
-        setIsSending(isSending)
-    }
 
     let userInput = {
         account: '',
@@ -68,27 +62,36 @@ function Add_user() {
         { id: 'userAccess', label: '權限', type: 'select', option: accessOption }
     ]
 
-    const submitPost = () => {  //提交新進員工申請
-        switchModal()
-        const value = Object.values(inputInfo)
-        axiosInstance.post(process.env.REACT_APP_CreateUserInfo, { empToken: token, value: value })
-        .then(res => {
-            console.log(res)
-        })
-        .catch(e => {
+    const isSending = useRef(false)
+    const swtichSendingStateu = () => {
+        isSending.current = !isSending.current
+    }
 
-        })
-        .finally(() => {
-            setInputInfo(userInput)
-        })
+    const submitPost = () => {  //提交新進員工申請
+        swtichSendingStateu()
+        switchModal()
+        if(isSending) {
+            const value = Object.values(inputInfo)
+            console.log(value)
+            axiosInstance.post(process.env.REACT_APP_CreateUserInfo, { empToken: token, value: value })
+            .then(res => {
+                console.log(res)
+            })
+            .catch(e => {
+    
+            })
+            .finally(() => {
+                setInputInfo(userInput)
+                swtichSendingStateu()
+            })
+        } 
     }
 
 
     return (
         <>
         <CustCon>
-            <Button onClick={switchModal}>新增</Button>{" "}
-            <Button variant="danger">刪除</Button>
+            <Button onClick={switchModal}>新增</Button>
         </CustCon>
         <Modal open={showModal} onClose={switchModal} center>
             <h2>新增使用者</h2>

@@ -1,16 +1,28 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-const CustDialog = ({show, title, msg, hideFunc, clickConfirm}) => {
+const CustDialog = (props) => {
+  const {prop} = props
+
+  /*
+    prop = {
+    title: ,
+    msg: ,
+    show: ,
+    hideFunc: ,
+    clickConfirm: 
+  } 
+  */
+
   return (
     <>
-      <Modal show={show} onHide={hideFunc}>
+      <Modal show={prop.show} onHide={prop.hideFunc}>
         <Modal.Header closeButton>
-          <Modal.Title>{title}</Modal.Title>
+          <Modal.Title>{prop.title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{msg}</Modal.Body>
+        <Modal.Body>{prop.msg}</Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={clickConfirm}>
+          <Button variant="primary" onClick={ prop.clickConfirm }>
             確認
           </Button>
         </Modal.Footer>

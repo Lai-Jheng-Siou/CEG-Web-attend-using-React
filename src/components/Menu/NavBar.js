@@ -26,17 +26,19 @@ function NavBar() {
     const [msg, setMsg] = useState('')
     const switchDialog = () => setShowDialog(!showDialog)
 
+    const prop = {
+        show: showDialog,
+        title: title,
+        msg: msg,
+        hideFunc: switchDialog,
+        clickConfirm: switchDialog,
+    }
+
     
     return (
         <>
             {/* 彈出視窗 */}
-            <CustDialog
-                show={showDialog} 
-                title = {title}
-                msg = {msg}
-                hideFunc={switchDialog}
-                clickConfirm={switchDialog}
-            />
+            <CustDialog prop={ prop } />
 
             {/* 頂部物件 */}
             <TopItems />  

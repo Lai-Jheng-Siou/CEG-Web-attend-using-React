@@ -72,8 +72,6 @@ function Login() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const navigate = useNavigate()
-
     const togglePasswordVisibility = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
     };
@@ -100,11 +98,13 @@ function Login() {
         })
     }
 
-      useEffect(() => {
-        if(loginStatus) {
-            return navigate('/menu')
-        }
-      }, [loginStatus])
+    const navigate = useNavigate()
+
+    useEffect(() => {
+    if(loginStatus) {
+        return navigate('/menu')
+    }
+    }, [loginStatus])
 
 
     return (

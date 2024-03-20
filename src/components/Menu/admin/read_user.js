@@ -16,11 +16,10 @@ const PageDiv = styled.div`
 
 
 function Userinfo() {
-    const remainder = 10
-
     let userInfo = JSON.parse(sessionStorage.getItem(process.env.REACT_APP_localStorage))
     const token = userInfo['token']
     
+    const remainder = 10
     const [resData, setResData] = useState({})  //存放後端傳回資料
     const [totalPage, setTotalPage] = useState(-1)
     const [nowPage, setNowPage] = useState(1)
@@ -31,18 +30,19 @@ function Userinfo() {
             tableName: 'empinfo'
         })
         .then(res => {
-            let total_rows = res.data[0].TOTAL_ROWS 
-            setTotalPage(Math.floor(total_rows / remainder) + 1)
+            let total_rows = res.data[0].TOTAL_ROWS
+            let page = total_rows % remainder == 0 ?total_rows / remainder :Math.floor(total_rows / remainder) + 1
+            setTotalPage(page)
         })
         .catch(e => {
             console.log(e)
         })
-    }, [])
+    })
 
     useEffect(() => {  //跟後端溝通
         axiosInstance.post(process.env.REACT_APP_GetUserInfo, {
             empToken: token,
-            page: nowPage * remainder - 9
+            page: nowPage * remainder - remainder
         })
         .then(res => {
             setResData(res.data)
@@ -56,8 +56,8 @@ function Userinfo() {
     return(
         <>
             <TopItems></TopItems>
-            <AddUser></AddUser>
-            <GetUserInfo resData = { resData } token = { token } />
+            <AddUser token = { token } />
+            <GetUserInfo resData = { resData } setResData = { setResData } token = { token } />
             <PageDiv>
                 <PageBtn
                     color='info'

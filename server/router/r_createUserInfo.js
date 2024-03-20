@@ -5,12 +5,12 @@ const token = require('../token')
 
 const router = express.Router()
 
-router.post(process.env.REACT_APP_CreateUserInfo, (req, res) => {
+router.post(process.env.REACT_APP_CreateUserInfo, (req, res) => {  //需要作密碼加密
     const { empToken, value } = req.body
     const tokenDecode = token.tokenParse(empToken)
-    console.log('in')
+
     if(!tokenDecode.error) {
-        const sqlKeyIn = `INSERT INTO empInfo(empId, pasd, name, depName, access) VALUES(?, ?, ?, ?, ?)`
+        const sqlKeyIn = `INSERT INTO empInfo(empId, pasd, name, depName, email, access) VALUES(?, ?, ?, ?, ?, ?)`
 
         conn.query(sqlKeyIn, value, (err) => {
             if(err) {

@@ -121,20 +121,23 @@ export function RecordExport(props) {
     //匯出並關閉對話框
     const exportFun = () => { 
         ExcelExport(attendInfo)
-        setShow(!show)
+        switchShow()
     }
     //對話框顯示
     const switchShow = () => { setShow(!show) }
 
+    const prop = {
+        show: show,
+        title: '確認',
+        msg: '是否要匯出資料',
+        hideFunc: switchShow,
+        clickConfirm: exportFun
+    }
+
     return (
         <>
             <CustButton variant="info" onClick={() => {switchShow()}}>匯出</CustButton>
-            <CustDialog 
-                show = {show} 
-                title = {'確認'} 
-                msg = {'是否要匯出資料'} 
-                hideFunc = { switchShow }
-                clickConfirm = { exportFun } />
+            <CustDialog prop = {prop} />
         </>
     )
 }
