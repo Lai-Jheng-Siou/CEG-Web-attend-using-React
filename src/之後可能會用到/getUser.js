@@ -2,20 +2,20 @@ import { useState, useRef } from "react";
 import styled from "styled-components";
 import { Container, Row, Col } from "react-bootstrap";
 
-import { device } from "../../rwdSize"
+import { device } from "../components/rwdSize"
 
 //react icon
 import { CiEdit } from "react-icons/ci";  
 import { TiTick } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
 import { MdDeleteForever } from "react-icons/md";
-
-import { FormControl } from "../../Customize_Tool/Cust_UI";
-import axiosInstance from "../../Instance/axiosInstance";
-
 import Select from 'react-select'
-import { departmentOption, accessOption } from "../../Customize_Tool/selectOptions";
-import { default as CustDialog } from "../../Customize_Tool/ConfirmDialog"
+
+import { FormControl } from "../components/Customize_Tool/Cust_UI";
+import { default as CustDialog } from "../components/Customize_Tool/ConfirmDialog"
+import axiosInstance from "../components/Instance/axiosInstance";
+
+import { formFields, textInfo } from "../components/Menu/admin/publicSource"
 
 
 const CustCon = styled(Container)`
@@ -82,30 +82,10 @@ const MobileColFix = styled(Col)`
 function GetUserInfo(props) {  //傳入參數需有 表格title, token, api address
     const { resData, setResData, token } = props
 
-    const titleTextAry = [
-        { id: 'account', label: '帳號', type: 'text' },
-        { id: 'password', label: '密碼', type: 'text' },
-        { id: 'name', label: '姓名', type: 'text' },
-        { id: 'department', label: '部門', type: 'select', option: departmentOption },
-        { id: 'email', label: '信箱', type: 'text' },
-        { id: 'access', label: '權限', type: 'select', option: accessOption },
-    ]
-
-    //編輯暫存
-    const textInfo = {
-        account: '',
-        password: '',
-        name: '',
-        department: '',
-        email: '',
-        access: ''
-    }
-
     const [tmpInfo, setTmpInfo] = useState(textInfo)
 
     const changeTmpInfo = (event) => {
         const { name, value } = event.target
-
         setTmpInfo({...tmpInfo, [name]: value})
     }
 
@@ -182,7 +162,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                     <CustColmin>編輯</CustColmin>
                     <CustColmin>移除</CustColmin>
                     {
-                        titleTextAry.map((field,index) => (
+                        formFields.map((field,index) => (
                             <CustCol key={index}><Custtext>{field.label}</Custtext></CustCol>
                         ))
                     }
@@ -199,7 +179,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                 <ImCross style = {{ fontSize: "15px", cursor: 'pointer' }} onClick = { () => { handleEdit(-1) } } />
                             </CustColmin>
                             {
-                                titleTextAry.map((field, index)=> (
+                                formFields.map((field, index)=> (
                                     <CustCol key = {index}>
                                         <ChooseRWD field = {field} />
                                     </CustCol>
@@ -214,7 +194,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                 <MdDeleteForever style={{fontSize: "25px", cursor: "pointer"}} onClick = { () => switchIsShowDialog(index) } />
                             </CustColmin>
                             {
-                                titleTextAry.map(field => (
+                                formFields.map(field => (
                                     <CustCol><Custtext>{items[field.id]}</Custtext></CustCol>
                                 ))
                             }
@@ -239,7 +219,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                 <ImCross style = {{ fontSize: "18px", cursor: 'pointer', margin: "5px" }} onClick = { () => { handleEdit(-1) } } />
                             </MobileColFix>
                             {
-                                titleTextAry.map(field => (
+                                formFields.map(field => (
                                     <MobileCol key = {field.id}>
                                         <MobileText>{field.label}</MobileText>
                                         <ChooseRWD field = {field} />
@@ -253,7 +233,7 @@ function GetUserInfo(props) {  //傳入參數需有 表格title, token, api addr
                                 <CiEdit style={{ fontSize: "30px", cursor: 'pointer' }} onClick = { () => { handleEdit(index) } } />
                             </MobileColFix>
                             {
-                                titleTextAry.map(field => (
+                                formFields.map(field => (
                                     <CustCol key={field.id}><Custtext>{field.label}: {items[field.id]}</Custtext></CustCol>
                                 ))
                             }

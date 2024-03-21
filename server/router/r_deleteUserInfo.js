@@ -14,7 +14,7 @@ router.post(process.env.REACT_APP_DeleteUserInfo, (req, res) => {
             if(error) {
                 res.status(500).json(error)
             }else {
-                res.json({success: true})
+                res.json({success: true, result: dbResult})
             }
         })
     }

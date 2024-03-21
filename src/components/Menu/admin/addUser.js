@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import Select from 'react-select'
 import axiosInstance from "../../Instance/axiosInstance";
 
-import { accessOption, departmentOption } from "../../Customize_Tool/selectOptions";
+import { formFields, textInfo } from "./publicSource"
 
 const CustCon = styled(Container)`
     margin-top: 20px;
@@ -34,16 +34,7 @@ function Add_user(props) {
     const [showModal, setShowModal] = useState(false)
     const switchModal = () => { setShowModal(!showModal) }
 
-    let userInput = {
-        account: '',
-        password: '',
-        userName: '',
-        department: '',
-        userEmail: '',
-        userAccess: ''
-    }
-
-    const [inputInfo, setInputInfo] = useState(userInput)  //存放使用者輸入內容
+    const [inputInfo, setInputInfo] = useState(textInfo)  //存放使用者輸入內容
 
     const changeInputText = (event) => {  //保存編輯框文字
         const {id, value} = event.target
@@ -53,15 +44,6 @@ function Add_user(props) {
         setInputInfo({...inputInfo, [id]: select.value})
     }
     
-    const formFields = [
-        { id: 'account', label: '使用者帳號', type: 'text' },
-        { id: 'password', label: '使用者密碼', type: 'text' },
-        { id: 'userName', label: '使用者名稱', type: 'text'  },
-        { id: 'department', label: '部門', type: 'select', option: departmentOption },
-        { id: 'userEmail', label: '信箱', type: 'text' },
-        { id: 'userAccess', label: '權限', type: 'select', option: accessOption }
-    ]
-
     const isSending = useRef(false)
     const swtichSendingStateu = () => {
         isSending.current = !isSending.current
@@ -81,7 +63,7 @@ function Add_user(props) {
     
             })
             .finally(() => {
-                setInputInfo(userInput)
+                setInputInfo(textInfo)
                 swtichSendingStateu()
             })
         } 
