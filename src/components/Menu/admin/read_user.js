@@ -1,13 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import Select from 'react-select'
 
 import axiosInstance from "../../Instance/axiosInstance";
 
-import { FormControl } from "../../Customize_Tool/Cust_UI";
 import { default as CustDialog } from "../../Customize_Tool/ConfirmDialog"
-
-import { textInfo } from "./publicSource"
 
 import { TopItems } from "../TopItem";
 import AddUser from "./addUser";
@@ -15,18 +11,13 @@ import { MobileJSX } from "./userMobile"
 import { DesktopJSX } from "./userDesktop"
 import PageBtn from "./PageButton";
 
+import { textInfo, ShareModal } from "./publicSource"
+
 
 const PageDiv = styled.div`
     margin-top: 20px;
     display: flex;
     justify-content: center;
-`
-const Text = styled.p`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
-    margin: 10px;
 `
 
 
@@ -68,89 +59,16 @@ function Userinfo() {
         })
     }, [nowPage])
 
-
-    const [tmpInfo, setTmpInfo] = useState(textInfo)
-
-    const changeTmpInfo = (event) => {
-        const { name, value } = event.target
-        setTmpInfo({...tmpInfo, [name]: value})
-    }
-
-    //編輯鍵操作
-    const [ isEdit, setIsEdit ] = useState(false)  //確認狀態是否在編輯
-    const [ editId, setEditId ] = useState(-1)  //存放編輯中ID
-    const [ dis_checkBtn, setDis_checkBtn ] = useState(false)  //當編輯時 禁用勾選框
-    const isTick = useRef(false)  //是否按下送出編輯資料
-    const switchTickStatus = () => {  //切換狀態
-        isTick.current = !isTick.current
-    }
-
-    const handleTick = () => {  //送出編輯中的資料
-        switchTickStatus()
-
-        if(isTick) {
-            axiosInstance('/alterUser', { empToken: token, newInfo: tmpInfo})
-            .then(res => {
-                if(res.data.isSuccess) {
-                    //如果成功返回 將tmp資料修改進當前表格
-                }
-            })
-            .catch(e => {
-                console.log(e)
-            })
-            .finally(() => {
-                //不管成功與否 清除tmp表格  並解除修改模式
-                setTmpInfo(textInfo)
-                setEditId(-1)
-                setIsEdit(false)
-                setDis_checkBtn(false)
-                switchTickStatus()
-            })
-        }
-    }
-
-    const handleEdit = (index) => {
-        if (!isEdit) {
-            if (index < resData.length) {
-                const updatedInfo = resData[index];
-                setTmpInfo({...tmpInfo, ...updatedInfo});
-            }
-        }
-        setIsEdit(!isEdit)
-        setDis_checkBtn(!dis_checkBtn)
-        setEditId(index)
-    }
-
-        
-    function ChooseRWD(props) {     //共用JSX
-        const { field } = props
-
-        if(field.type === 'select') {
-            return <Select options={ field.option }/>
-        }else if(field.id === 'account') {
-            return <Text id={field.id}>{tmpInfo[field.id]}</Text>
-        }else {
-            return (
-                <FormControl 
-                    type = {field.type}
-                    id = { field.id }
-                    name = {field.id}
-                    value = { tmpInfo[field.id] }
-                    onChange = { changeTmpInfo }
-                />
-            )
-        }
-    }
-
+//---------------------------------------------------------------------------------------------------------------------刪除使用者
     const testMsg = useRef("")
     const delIndex = useRef(-1)
-    const [isShowDialog, setIsShowDialog] = useState(false)
-    const switchIsShowDialog = (index) => {
+    const [showDialog_del, setShowDialog_del] = useState(false)
+    const switchShowDialog_D = (index) => {
         if(index >= 0) {
             delIndex.current = index
             testMsg.current = `${resData[index].account}`
         }
-        setIsShowDialog(!isShowDialog)
+        setShowDialog_del(!showDialog_del)
     }
     const deleteUserFunc = () => { 
         axiosInstance.post(process.env.REACT_APP_DeleteUserInfo, { empToken: token, value: [testMsg.current] })
@@ -165,34 +83,71 @@ function Userinfo() {
             console.log(e)
         })
         .finally(() => {
-            switchIsShowDialog()
+            switchShowDialog_D()
             delIndex.current = -1
         })
     }
     const dialogProps = {
         title: "警告: 確定要刪除?",
         msg: testMsg.current,
-        show: isShowDialog,
-        hideFunc: switchIsShowDialog,
+        show: showDialog_del,
+        hideFunc: switchShowDialog_D,
         clickConfirm: deleteUserFunc
+    }
+
+//---------------------------------------------------------------------------------------------------------------------修改使用者
+    const [showDialog_U, setShowDialog_U] = useState(false)
+    const switchShowDialog_U = (items) => { 
+        setInputInfo({...inputInfo, ...items})
+        setShowDialog_U(!showDialog_U)
+    }
+
+    const [inputInfo, setInputInfo] = useState(textInfo)
+
+    const changeInputText = (event) => {  //保存編輯框文字
+        const {id, value} = event.target
+        setInputInfo({...inputInfo, [id]: value})
+    }
+    const changeInputSelect = (select, id) => {  //保存選擇框文字
+        setInputInfo({...inputInfo, [id]: select.value})
+    }
+
+    const sendAlterInfo = () => {
+        axiosInstance.post(process.env.REACT_APP_AlterUserInfo, { empToken: token, newInfo: inputInfo })
+        .then(res => {
+            console.log('修改成功')
+        })
+        .catch(e => {
+            console.log(e)
+        })
+        .finally(() => {
+            setInputInfo(textInfo)
+            switchShowDialog_U()
+        })
+    }
+
+    const alterUser = {
+        title: "修改使用者",
+        open: showDialog_U,
+        close: switchShowDialog_U,
+        changeInputText: changeInputText,
+        changeInputSelect: changeInputSelect,
+        submitPost: sendAlterInfo
     }
 
     const transferProps = {
         resData: resData,
-        isEdit: isEdit,
-        editId: editId,
-        handleTick: handleTick,
-        handleEdit: handleEdit,
-        switchIsShowDialog: switchIsShowDialog,
+        switchShowDialog_D: switchShowDialog_D,
+        switchShowDialog_U: switchShowDialog_U
     }
 
 
-    return(
+    return (
         <>
             <TopItems></TopItems>
             <AddUser token = { token } />
-            <DesktopJSX prop = { transferProps } ChooseRWD = { ChooseRWD } />
-            <MobileJSX prop = { transferProps } ChooseRWD = { ChooseRWD } />
+            <DesktopJSX prop = { transferProps } />
+            <MobileJSX prop = { transferProps } />
             <PageDiv>
                 <PageBtn
                     color='info'
@@ -202,6 +157,7 @@ function Userinfo() {
                 />
             </PageDiv>
             <CustDialog prop = {dialogProps}  />
+            <ShareModal prop = {alterUser} inputInfo = { inputInfo } />
         </>
     )
 }

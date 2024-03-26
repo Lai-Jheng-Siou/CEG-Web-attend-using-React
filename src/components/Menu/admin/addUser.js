@@ -72,29 +72,29 @@ function Add_user(props) {
 
     return (
         <>
-        <CustCon>
-            <Button onClick={switchModal}>新增</Button>
-        </CustCon>
-        <Modal open={showModal} onClose={switchModal} center>
-            <h2>新增使用者</h2>
-            <ModalForm>
-                {
-                    formFields.map(item => (
-                        <div key = {item.id}>
-                            <FormLabel htmlFor = {item.id}>{item.label}</FormLabel>
-                            {
-                                item.type === 'text'
-                                ?<FormInput id = {item.id} type = {item.type} value = {inputInfo[item.id]} onChange = {changeInputText} />
-                                :<Select options={item.option} onChange={ (select) => {changeInputSelect(select, item.id)} } />
-                            }
-                        </div>
-                    ))
-                }
-                <DivBtn>
-                    <Button onClick={submitPost}>送出</Button>{" "}
-                </DivBtn>
-            </ModalForm>
-        </Modal>
+            <CustCon>
+                <Button onClick={switchModal}>新增</Button>
+            </CustCon>
+            <Modal open={showModal} onClose={switchModal} center>
+                <h2>新增使用者</h2>
+                <ModalForm>
+                    {
+                        formFields.map(item => (
+                            <div key = {item.id}>
+                                <FormLabel htmlFor = {item.id}>{item.label}</FormLabel>
+                                {
+                                    item.type === 'text'
+                                    ?<FormInput id = {item.id} type = {item.type} value = {inputInfo[item.id]} onChange = {changeInputText} />
+                                    :<Select options={item.option} onChange={ (select) => {changeInputSelect(select, item.id)} } />
+                                }
+                            </div>
+                        ))
+                    }
+                    <DivBtn>
+                        <Button onClick={submitPost}>送出</Button>{" "}
+                    </DivBtn>
+                </ModalForm>
+            </Modal>
         </>
     )
 }

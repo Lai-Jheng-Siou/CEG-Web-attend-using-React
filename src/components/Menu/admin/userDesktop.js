@@ -5,8 +5,7 @@ import { device } from "../../rwdSize"
 
 //react icon
 import { CiEdit } from "react-icons/ci";  
-import { TiTick } from "react-icons/ti";
-import { ImCross } from "react-icons/im";
+
 import { MdDeleteForever } from "react-icons/md";
 
 import { formFields } from "./publicSource"
@@ -43,7 +42,7 @@ const Custtext = styled.p`
 
 
 export function DesktopJSX(props) {  //大螢幕顯示這邊
-    const { prop, ChooseRWD } = props
+    const { prop } = props
 
     return (
         <CustCon>
@@ -59,28 +58,12 @@ export function DesktopJSX(props) {  //大螢幕顯示這邊
             {
                 prop.resData && prop.resData.length > 0
                 ?prop.resData.map((items, index) => (
-                    prop.isEdit && prop.editId === index
-                    ?<CustRow key = { index } iseven = { index % 2 === 0 }>
+                    <CustRow key = { index } iseven = { index % 2 === 0 }>
                         <CustColmin>
-                            <TiTick style = {{ fontSize: "25px", cursor: 'pointer' }} onClick={ () => { prop.handleTick() } } />
+                            <CiEdit style={{ fontSize: "20px", cursor: 'pointer' }} onClick = { () => prop.switchShowDialog_U(items) } />
                         </CustColmin>
                         <CustColmin>
-                            <ImCross style = {{ fontSize: "15px", cursor: 'pointer' }} onClick = { () => { prop.handleEdit(-1) } } />
-                        </CustColmin>
-                        {
-                            formFields.map(field=> (
-                                <CustCol key = {field.id}>
-                                    <ChooseRWD field = {field} />
-                                </CustCol>
-                            ))
-                        }
-                    </CustRow>
-                    :<CustRow key = { index } iseven = { index % 2 === 0 }>
-                        <CustColmin>
-                            <CiEdit style={{ fontSize: "20px", cursor: 'pointer' }} onClick = { () => { prop.handleEdit(index) } } />
-                        </CustColmin>
-                        <CustColmin>
-                            <MdDeleteForever style={{fontSize: "25px", cursor: "pointer"}} onClick = { () => prop.switchIsShowDialog(index) } />
+                            <MdDeleteForever style={{fontSize: "25px", cursor: "pointer"}} onClick = { () => prop.switchShowDialog_D(index) } />
                         </CustColmin>
                         {
                             formFields.map(field => (
